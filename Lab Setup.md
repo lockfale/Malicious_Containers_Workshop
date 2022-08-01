@@ -34,7 +34,8 @@ This should come out to around the following cost per month: $26.46, or $0.03 ce
 **3. Run the following setup commands: ** 
 
 `sudo apt update && sudo apt install ansible python3-pip docker.io etcd-client unzip jq 
-sudo usermod -aG docker $USER`
+
+`sudo usermod -aG docker $USER`
 
 
 **4. Install the Kubectl binary:**
