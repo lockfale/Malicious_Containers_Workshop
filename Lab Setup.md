@@ -2,7 +2,7 @@
 
 
 Welcome to the docker/kubernetes training, the following destructions will help you set up a lab for the Defcon Workshop. The K8s lab component is predominantly built w/ the assistance of `kind` - a tool for rapid prototyping in k8s, and `ansible` for orcestration. It’s not suitable for production usage,but it builds fast and reliably given our time constraints. It’ll give us an environment that will teach us the fundamental components. 
-Join the discord: https://discord.gg/Hpw5wk5yxt 
+
 
 **Time:** 5-10 mins including spinning dials
 
