@@ -88,7 +88,7 @@ kubernetes so kubectl is compatible
 Note that the YAML file is annotated, so you can understand how it works. 
  Create a file: 
  `nano kind-lab-config.yaml` 
- Paste the following into the file: https://gist.githubusercontent.com/digital-shokunin/04d894fc99f767cb98ec3dd76ad757a1/raw/138d4523f52ef895ba02a9c3572f20801c876d7d/kind-lab-config.yaml  
+ Paste the following into the file: https://github.com/5stars217/DC30_Malicious_Containers_Workshop/blob/main/kind-lab-config.yaml 
  
  Save the file. 
  
