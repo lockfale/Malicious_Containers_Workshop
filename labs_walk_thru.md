@@ -79,7 +79,7 @@ docker ps --all
 ```
 
 Note: Replace \<id\> below with the container id from the output of the above command.
-  - Tip: you usually only need the first few letters.
+  - Tip: you usually only need the first few letters of the id for Docker to locate.
 
 ```
 docker start <id>
@@ -259,4 +259,25 @@ tar -xvf nginx.tar
 ```
 cat <hash>.json | jq
 ```
+
+### Slide 38 - Optional - Automated
+
+```
+sudo docker run -t --rm -v /var/run/docker.sock:/var/run/docker.sock:ro pegleg/whaler -sV=1.36 nginx:latest
+```
+```
+sudo docker run -t --rm -v /var/run/docker.sock:/var/run/docker.sock:ro pegleg/whaler -sV=1.36 wellsfargo102/upload
+```
+
+### Slide 42 - is nginx real?
+
+```
+docker image inspect nginx | jq
+```
+
+```
+docker trust inspect nginx | jq
+```
+
+## Module 3: Offensive Docker Techniques
 
