@@ -33,7 +33,7 @@ This should come out to around the following cost per month: $26.46, or $0.03 ce
 
 **3. Run the following setup commands: ** 
 
-`sudo apt update && sudo apt install ansible python3-pip docker.io etcd-client unzip jq 
+`sudo apt update && sudo apt install ansible python3-pip docker.io etcd-client unzip jq`
 
 `sudo usermod -aG docker $USER`
 
@@ -104,6 +104,7 @@ Note that the YAML file is annotated, so you can understand how it works.
 
 You should see 2 worker nodes and a control plane running.
  
+![get_nodes](https://user-images.githubusercontent.com/32903188/182169551-f2564d91-33e9-4cc6-b4f2-ba9f9cd62834.png)
 
 
 **9. Do not turn off the VM after setup whilst waiting for the workshop. Otherwise you'll lose all the above (ephemeral storage). ** 
