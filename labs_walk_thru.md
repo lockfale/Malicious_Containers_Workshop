@@ -1,7 +1,7 @@
 # Labs Walk Thru
 **This is an accompanying file with the lab instructions and commands to help walk thru the labs. It's especially intended for use for those that have trouble copying and pasting from the slides, or prefer not to.**
 
-**If viewing on GitHub, you can navigate using the table of contents in the top left.**
+**If viewing on GitHub, you can navigate using the table of contents button in the top left next to the line count.**
 
 ## Module 1 - Docker
 
@@ -488,3 +488,33 @@ docker run --restart nginx
 ```
 
 
+### Slide 63 - Exercise: Libprocess hider lab
+
+Let's go back to our cmddemo Dockerfile
+```
+cd ~/imagetest
+```
+```
+git clone https://github.com/gianlucaborello/libprocesshider
+```
+```
+cd libprocesshider && vi processhider.c
+```
+
+Change this:
+```
+/*
+ * Every process with this name will be excluded
+ */
+static const char* process_to_filter = "evil_script.py";
+```
+to this (use `i` to enter insert mode in vi):
+```
+static const char* process_to_filter = "sleep";
+```
+> After changing, hit `ESC`, then type `:wq`
+
+Compile:
+```
+make
+```
