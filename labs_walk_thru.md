@@ -1,5 +1,7 @@
 # Labs Walk Thru
-##### This is an accompanying file with the lab instructions and commands to help walk thru the labs. It's especially intended for use for those that have trouble copying and pasting from the slides, or prefer not to.
+**This is an accompanying file with the lab instructions and commands to help walk thru the labs. It's especially intended for use for those that have trouble copying and pasting from the slides, or prefer not to.**
+
+**If viewing on GitHub, you can navigate using the table of contents in the top left.**
 
 ## Module 1 - Docker
 
