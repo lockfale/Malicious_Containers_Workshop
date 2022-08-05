@@ -67,11 +67,11 @@ This should come out to around the following cost per month: $26.46, or $0.03 ce
   
   `kind version` 
   
-  `kind create cluster --image=kindest/node:v1.24.0` 
+  `kind create cluster --image=kindest/node:v1.24.2` 
   
   
-**Note:** by default it’ll pull v1.21.1 so image argument is added to specify newest version of 
-kubernetes so kubectl is compatible
+**Note:** by default it’ll pull v1.24.0 so image argument is added to specify newest version of 
+kubernetes
 
 
 `kubectl version`
