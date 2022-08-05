@@ -20,12 +20,12 @@ kubeadmConfigPatchesJSON6902:
       value: my-hostname
 # 1 control plane node and 3 workers
 nodes:
-# All nodes need 1.24 version of image instead of older default
+# All nodes need 1.23 version of image instead of older default for version of kind we're using
 # the control plane node config
 - role: control-plane
-  image: kindest/node:v1.24.2
+  image: kindest/node:v1.23.0
 # the three workers
 - role: worker
-  image: kindest/node:v1.24.2
+  image: kindest/node:v1.23.0
 - role: worker
-  image: kindest/node:v1.24.2
+  image: kindest/node:v1.23.0
