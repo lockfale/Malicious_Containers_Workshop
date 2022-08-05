@@ -56,7 +56,7 @@ This should come out to around the following cost per month: $26.46, or $0.03 ce
  
  **5. Install Kind** (Kubernetes in Docker) 
  
- `curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.14.0/kind-linux-amd64` 
+ `curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.11.1/kind-linux-amd64` 
  
  `chmod +x ./kind`
  
@@ -67,10 +67,10 @@ This should come out to around the following cost per month: $26.46, or $0.03 ce
   
   `kind version` 
   
-  `kind create cluster --image=kindest/node:v1.24.2` 
+  `kind create cluster --image=kindest/node:v1.23.0` 
   
   
-**Note:** by default it’ll pull v1.24.0 so image argument is added to specify newest version of 
+**Note:** by default it’ll pull an old version of Kubernetes so image argument is added to specify newer version of 
 kubernetes
 
 
