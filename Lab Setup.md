@@ -73,7 +73,7 @@ This should come out to around the following cost per month: $26.46, or $0.03 ce
 **Note:** by default it’ll pull an old version of Kubernetes so image argument is added to specify newer version of 
 kubernetes
 
-
+**Note:** kubectl will be one major version ahead of our Kubernetes install but that shouldn't effect our labs
 `kubectl version`
 
 `docker ps`
