@@ -23,9 +23,9 @@ nodes:
 # All nodes need 1.24 version of image instead of older default
 # the control plane node config
 - role: control-plane
-  image: kindest/node:v1.24.0
+  image: kindest/node:v1.24.2
 # the three workers
 - role: worker
-  image: kindest/node:v1.24.0
+  image: kindest/node:v1.24.2
 - role: worker
-  image: kindest/node:v1.24.0
+  image: kindest/node:v1.24.2
