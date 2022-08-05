@@ -67,7 +67,7 @@ This should come out to around the following cost per month: $26.46, or $0.03 ce
   
   `kind version` 
   
-  `kind create cluster --image=kindest/node:v1.23.0` 
+  `kind create cluster --image=kindest/node:v1.24.0` 
   
   
 **Note:** by default it’ll pull v1.21.1 so image argument is added to specify newest version of 
@@ -88,7 +88,7 @@ kubernetes so kubectl is compatible
 Note that the YAML file is annotated, so you can understand how it works. 
  Create a file: 
  `nano kind-lab-config.yaml` 
- Paste the following into the file: https://github.com/lockfale/DC30_Malicious_Containers_Workshop/blob/main/kind-lab-config.yaml 
+ Paste the following into the file: [https://github.com/lockfale/DC30_Malicious_Containers_Workshop/blob/main/kind-lab-config.yaml ](https://raw.githubusercontent.com/lockfale/DC30_Malicious_Containers_Workshop/main/kind-lab-config.yaml)
  
  Save the file. 
  
