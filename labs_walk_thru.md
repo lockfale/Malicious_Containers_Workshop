@@ -661,7 +661,7 @@ docker stop [container name/id]
 
 ## Module 4 - Container IR - GL,HF.
 
-### Slide 69 - NOICE
+### Slide 69 - Image CTF
 ```
 docker image pull digitalshokunin/webserver
 ```
