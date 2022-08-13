@@ -35,6 +35,16 @@ When you're in insert mode, you'll see in the bottom left hand corner that this 
 sudo mv ./kubectl /usr/local/bin/kubectl
 ` 
 
+**i'm stuck in my container and i can't control+c exit** 
+ 
+
+- Open a new terminal window 
+- `docker container ls` 
+
+- find the stuck container 
+
+- `docker stop $containerID` # just the first couple of characters will do, ie `docker stop ac29` 
+ 
 
 **kubectl commands don't work** 
 
@@ -46,5 +56,9 @@ Your kubeconfig has been blown away.
 ` kind get kubeconfig --name lab > .kube/config  
 ` 
 
-
+** POSTING to requestbin.com isn't working  ** 
+ 
+Did you paste a pipedream link from your unique page, or a requestbin link? 
+use this one: 
+<img width="575" alt="image" src="https://user-images.githubusercontent.com/32903188/184508462-23c14724-231d-4391-b971-e78af5450573.png">
 
