@@ -31,7 +31,7 @@ docker run --help
 Is Docker reporting down or VM was stopped after setting up, try running these commands:
 
 ```
-apt install acl -y
+sudo apt install acl -y
 ```
 ```
 sudo systemctl status docker
