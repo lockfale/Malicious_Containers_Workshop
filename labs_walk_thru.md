@@ -940,7 +940,7 @@ Start a shell in the container that will represent the attacker host
 docker exec -it client /bin/bash
 ```
 
-From here ssh to a pod that will represent a pod we've compromised and established a shell on.
+From here ssh to a pod that will represent a pod we've compromised and established a shell on. (Password is also `sshuser`)
 ```
 ssh -p 32001 sshuser@[Kubernetes Cluster IP] 
 ```
