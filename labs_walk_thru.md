@@ -259,7 +259,7 @@ tar -xvf nginx.tar
 ### Slide 36 - Manual Reversing cont.
 
 ```
-cat <hash>.json | jq
+cat <hash>/json | jq
 ```
 
 ### Slide 38 - Optional - Automated
