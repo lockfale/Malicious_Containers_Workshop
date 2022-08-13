@@ -109,7 +109,7 @@ docker stop <nginx_container_id>
   
 Overide name commands (optional):
 ```
-docker run -name webserver -d nginx
+docker run --name webserver -d nginx
 ```
 ```
 docker container ls
