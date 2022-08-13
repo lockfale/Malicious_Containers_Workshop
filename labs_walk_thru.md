@@ -629,9 +629,14 @@ After 30 seconds, you should see a new request on your requestbin tab (that hope
 
 Decrypt and decode the new data in the raw output of the requestbin request that came in. Replace `[DATA]` with the base64 string from it in the command below. Don't forget to replace `[strong password]` in the command below with the one you set in the Dockerfile.
 
+Enter these commands below as three separate lines, do not hit `[ENTER]` until you've replaced the [DATA] and the password.
 ```
 base64 -d <<< [DATA] \
+```
+```
 | openssl enc -d -aes-256-cbc -md sha512 -pbkdf2 -a -salt -pass "pass:[strong password]" \
+```
+```
 | gunzip
 ```
 
