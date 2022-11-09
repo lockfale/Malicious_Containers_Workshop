@@ -93,6 +93,11 @@ docker ps
 docker attach <id>
 ```
 
+Note: exit once done
+```
+exit
+```
+
 ### Slide 21 - Background a container
 
 ```
