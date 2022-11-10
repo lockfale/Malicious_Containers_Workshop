@@ -190,6 +190,8 @@ docker history wellsfargo102/upload
 docker history --no-trunc --format "{{.CreatedAt}}: {{.CreatedBy}}" wellsfargo102/upload |less
 ```
 
+> Use up and down arrow keys or `[SPACE]` to navigate, type `q` to quit
+
 ### Slide 32 - Extract without running
 
 ```
