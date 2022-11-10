@@ -491,7 +491,7 @@ cat /host_etc/shadow
 ### Slide 61 - Docker persistence
 
 ```
-docker run --restart always nginx
+docker run -d --restart always nginx
 ```
 
 
