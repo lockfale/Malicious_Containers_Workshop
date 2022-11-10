@@ -428,7 +428,7 @@ docker run -it --privileged ubuntu /bin/bash
 apt update && apt-get install -y libcap2-bin
 ```
 ```
-capsh --prunt
+capsh --print
 ```
 ```
 grep Cap /proc/self/status
