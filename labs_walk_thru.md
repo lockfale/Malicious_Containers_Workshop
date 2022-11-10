@@ -208,7 +208,7 @@ ls /tmp/*.jar
 ```
 vim /tmp/app.jar
 ```
-Remember `[ESC]` then `:wq` to exit from vim/view
+Remember `[ESC]` then `:q!` to exit from vim/view without saving
 
 Now that we've extracted the jar, we can remove the container. Use same container id from a few commands ago for command below.
 ```
