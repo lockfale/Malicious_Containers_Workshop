@@ -1090,11 +1090,14 @@ https://raw.githubusercontent.com/digital-shokunin/badPods/main/manifests/nothin
 --namespace lab-namespace
 ```
 
->**Note:** Exit too many times, had to restart your session, now getting a server <address> refused message? Try:
+>**Note:** Exit too many times, had to restart your session, now getting a server [address:port] refused message? Try:
+
 ```
 kubectl config use-context kind-lab
 ```
 
+Back to our regularly scheduled lab:
+  
 ```
 kubectl exec -it nothing-allowed-exec-pod -n lab-namespace -- bash
 ```
