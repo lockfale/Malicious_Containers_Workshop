@@ -56,6 +56,10 @@ Your kubeconfig has been blown away.
 ` kind get kubeconfig --name lab > .kube/config  
 ` 
 
+or 
+
+`kubectl config use-context kind-lab`
+
 ** POSTING to requestbin.com isn't working  ** 
  
 Did you paste a pipedream link from your unique page, or a requestbin link? 
