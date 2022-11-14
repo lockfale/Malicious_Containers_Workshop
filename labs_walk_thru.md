@@ -1091,7 +1091,6 @@ https://raw.githubusercontent.com/digital-shokunin/badPods/main/manifests/nothin
 ```
 
 >**Note:** Exit too many times, had to restart your session, now getting a server [address:port] refused message? Try:
-
 >```
 >kubectl config use-context kind-lab
 >```
