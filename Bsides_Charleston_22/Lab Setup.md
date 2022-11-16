@@ -88,7 +88,7 @@ kubernetes
 Note that the YAML file is annotated, so you can understand how it works. 
  Create a file: 
  `nano kind-lab-config.yaml` 
- Open the following link, and paste the contents into the file: [https://github.com/lockfale/DC30_Malicious_Containers_Workshop/blob/main/kind-lab-config.yaml ](https://raw.githubusercontent.com/lockfale/DC30_Malicious_Containers_Workshop/main/kind-lab-config.yaml)
+ Open the following link, and paste the contents into the file: [https://github.com/lockfale/DC30_Malicious_Containers_Workshop/blob/main/kind-lab-config.yaml ](https://raw.githubusercontent.com/lockfale/Malicious_Containers_Workshop/main/Bsides_Charleston_22/kind-lab-config.yaml)
  
  Save the file. 
  
