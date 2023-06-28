@@ -1,27 +1,29 @@
 ---
 - hosts: localhost
-  gather_facts: no
-  vars:
-    sha256check:
-      ok: "kubeectl:OK"
+  name: Setup localhost
+  gather_facts: false
   tasks:
-   - name: Add current user to Docker group
-     command: sudo usermod -aG docker $USER
-   - name: Download kubectl
-     command: curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
-   - name: Get file hash for kubectl
-     command: curl -LO "https://dl.k8s.io/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl.sha256"
-   - name: Compare hash values
-     shell: echo "$(<kubectl.sha256) kubectl" | sha256sum --check
-     register: command_output
-   - name: Verify everything okay
-     set_fact:
-       hash_check_success: "{{ command_output.stdout == sha256check['ok'] }}"
-   - name: 
-       debug: 
-         msg: "kubectl checks out okay"
-       when: hash_check_success   
-   - name: Create a namespace for privesc
-     command: kubectl apply -f k8s-manifests/namespaces.yaml
-   - name: Create a ClusterRole and ClusterRoleBinding
-     command: kubectl apply -f k8s-manifests/secrets-clusterrole.yaml
+    - name: Add current user to Docker group
+      ansible.builtin.user:
+        name: "{{ lookup('env', 'USER') }}"
+        groups: docker
+        append: true
+    - name: Download kubectl
+      ansible.builtin.command: curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+    - name: Get file hash for kubectl
+      ansible.builtin.command: curl -LO "https://dl.k8s.io/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl.sha256"
+    - name: Compare hash values
+      ansible.builtin.shell: set -o pipefail && echo "$(<kubectl.sha256) kubectl" | sha256sum --check
+      register: cmd_output
+      changed_when:
+        - "'kubectl:OK' in cmd_output.stdout"
+    - name: Show download result
+      ansible.builtin.debug:
+        msg: "Download of {{ cmd_output.stdout }}"
+    - name: Create a namespace for privesc
+      ansible.builtin.command: kubectl apply -f k8s-manifests/namespaces.yaml
+      register: cmd_output
+      changed_when:
+        - "'created' in cmd_output.stdout"
+    - name: Create a ClusterRole and ClusterRoleBinding
+      ansible.builtin.command: kubectl apply -f k8s-manifests/secrets-clusterrole.yaml
