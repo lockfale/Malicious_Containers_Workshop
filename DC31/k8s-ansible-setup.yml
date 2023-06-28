@@ -3,15 +3,22 @@
   name: Setup localhost
   gather_facts: false
   tasks:
+    - name: Install Docker and other dependencies
+      ansible.builtin.apt:
+        pkg:
+          - docker.io
+          - etcd-client
+          - jq
+          - unzip
     - name: Add current user to Docker group
       ansible.builtin.user:
         name: "{{ lookup('env', 'USER') }}"
         groups: docker
         append: true
     - name: Download kubectl
-      ansible.builtin.command: curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+      ansible.builtin.shell: curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
     - name: Get file hash for kubectl
-      ansible.builtin.command: curl -LO "https://dl.k8s.io/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl.sha256"
+      ansible.builtin.shell: curl -LO "https://dl.k8s.io/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl.sha256"
     - name: Compare hash values
       ansible.builtin.shell: set -o pipefail && echo "$(<kubectl.sha256) kubectl" | sha256sum --check
       register: cmd_output
@@ -20,10 +27,10 @@
     - name: Show download result
       ansible.builtin.debug:
         msg: "Download of {{ cmd_output.stdout }}"
-    - name: Create a namespace for privesc
-      ansible.builtin.command: kubectl apply -f k8s-manifests/namespaces.yaml
-      register: cmd_output
-      changed_when:
-        - "'created' in cmd_output.stdout"
-    - name: Create a ClusterRole and ClusterRoleBinding
-      ansible.builtin.command: kubectl apply -f k8s-manifests/secrets-clusterrole.yaml
+    # - name: Create a namespace for privesc
+    #   ansible.builtin.command: kubectl apply -f k8s-manifests/namespaces.yaml
+    #   register: cmd_output
+    #   changed_when:
+    #     - "'created' in cmd_output.stdout"
+    # - name: Create a ClusterRole and ClusterRoleBinding
+    #   ansible.builtin.command: kubectl apply -f k8s-manifests/secrets-clusterrole.yaml
