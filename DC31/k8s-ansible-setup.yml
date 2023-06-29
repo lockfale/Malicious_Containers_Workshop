@@ -53,6 +53,7 @@
       ansible.builtin.command: kubectl version --client
       register: client 
       failed_when: client.rc > 1
+    - name: kubectl client version
       ansible.builtin.debug:
         msg: client.stdout
       
