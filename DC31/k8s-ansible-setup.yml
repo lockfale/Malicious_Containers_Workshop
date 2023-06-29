@@ -20,15 +20,17 @@
     - name: Get latest stable kubectl version
       ansible.builtin.uri:
         url: https://dl.k8s.io/release/stable.txt
-        return_content: yes
+        return_content: true
       register: kubectl_version
     - name: Download kubectl
       ansible.builtin.uri:
         url: "https://dl.k8s.io/release/{{ kubectl_version.content }}/bin/linux/amd64/kubectl"
+        dest: /tmp/
+      register: kubectl
     - name: Get file hash for kubectl
       ansible.builtin.uri:
         url: "https://dl.k8s.io/{{ kubectl_version.content }}/bin/linux/amd64/kubectl.sha256"
-        return_content: yes
+        return_content: true
       register: kubectl_sha256
     - name: Compare hash values
       ansible.builtin.shell: echo "{{ kubectl_sha256.content }} kubectl" | sha256sum --check
@@ -38,6 +40,22 @@
     - name: Show download result
       ansible.builtin.debug:
         msg: "Download of {{ cmd_output.stdout }}"
+    - name: Move kubectl to final location and set permissions
+      ansible.builtin.file:
+        src: "{{ kubectl.path }}"
+        dest: "/usr/local/bin/kubectl"
+        state: hard
+        owner: root
+        group: root
+        mode: "+x"
+      become: true
+    - name: Check if kubectl is installed
+      ansible.builtin.command: kubectl version --client
+      register: client 
+      failed_when: client.rc > 1
+      ansible.builtin.debug:
+        msg: client.stdout
+      
     # - name: Create a namespace for privesc
     #   ansible.builtin.command: kubectl apply -f k8s-manifests/namespaces.yaml
     #   register: cmd_output
