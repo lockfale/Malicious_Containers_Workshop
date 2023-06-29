@@ -39,7 +39,7 @@ This should come out to around the following cost per month: $26.46, or $0.03 ce
 
 `export PATH=$PATH:/home/$USER/.local/bin`
 
-`curl -LO https://raw.githubusercontent.com/lockfale/Malicious_Containers_Workshop/main/DC31/lab-ansible-setup.yml`
+`curl -LO https://raw.githubusercontent.com/lockfale/Malicious_Containers_Workshop/dc31/DC31/lab-ansible-setup.yml`
 
 `ansible-playbook lab-ansible-setup.yml`
   
