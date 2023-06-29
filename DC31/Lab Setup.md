@@ -86,12 +86,12 @@ You should see 2 worker nodes and a control plane running.
 ![get_nodes](https://user-images.githubusercontent.com/32903188/182169551-f2564d91-33e9-4cc6-b4f2-ba9f9cd62834.png)
 
 
-**7. Do not turn off the VM after setup whilst waiting for the workshop. Otherwise you'll lose all the above (ephemeral storage). ** 
+**7. Do not turn off the VM after setup whilst waiting for the workshop. Otherwise you'll lose all the above (ephemeral storage).** 
 
   
    
 
-** Troubleshooting note:**
+**Troubleshooting note:**
 
 If you have an empty .kubeconfig file - your session was probably duplicated and not restarted after you installed kind. - make sure to exit your session and start a new one before continuing after the kind install.
 
