@@ -64,7 +64,7 @@ kubernetes
 `kind delete cluster` 
 
 
-**5. Build Lab Cluster ** 
+**5. Build Lab Cluster** 
 Note that the YAML file is annotated, so you can understand how it works. 
  The ansible playbook downloaded a file for you: 
  `ls kind-lab-config.yaml` 
