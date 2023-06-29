@@ -1,4 +1,4 @@
-# DC31_Malicious_Containers_Workshop
+# DC31_Malicious_Containers_Workshop_Redux
 
 
 Welcome to the docker/kubernetes training, the following destructions will help you set up a lab for the Defcon Workshop. The K8s lab component is predominantly built w/ the assistance of `kind` - a tool for rapid prototyping in k8s, and `ansible` for orcestration. It’s not suitable for production usage,but it builds fast and reliably given our time constraints. It’ll give us an environment that will teach us the fundamental components. 
@@ -64,7 +64,7 @@ kubernetes
 `kind delete cluster` 
 
 
-**7. Build Lab Cluster ** 
+**5. Build Lab Cluster ** 
 Note that the YAML file is annotated, so you can understand how it works. 
  The ansible playbook downloaded a file for you: 
  `ls kind-lab-config.yaml` 
@@ -75,7 +75,7 @@ Note that the YAML file is annotated, so you can understand how it works.
  
  This may take a couple of minutes, go get a coffee or something. 
  
- **8. Confirm lab is operational**
+ **6. Confirm lab is operational**
  
  `kubectl cluster-info --context kind-lab`
 
@@ -86,7 +86,7 @@ You should see 2 worker nodes and a control plane running.
 ![get_nodes](https://user-images.githubusercontent.com/32903188/182169551-f2564d91-33e9-4cc6-b4f2-ba9f9cd62834.png)
 
 
-**9. Do not turn off the VM after setup whilst waiting for the workshop. Otherwise you'll lose all the above (ephemeral storage). ** 
+**7. Do not turn off the VM after setup whilst waiting for the workshop. Otherwise you'll lose all the above (ephemeral storage). ** 
 
   
    
