@@ -1,0 +1,78 @@
+---
+- hosts: localhost
+  name: Setup localhost
+  gather_facts: false
+  tasks:
+    - name: Install Docker and other dependencies
+      ansible.builtin.apt:
+        pkg:
+          - docker.io
+          - etcd-client
+          - jq
+          - unzip
+      become: true
+    - name: Add current user to Docker group
+      ansible.builtin.user:
+        name: "{{ lookup('env', 'USER') }}"
+        groups: docker
+        append: true
+      become: true
+    - name: Get latest stable kubectl version
+      ansible.builtin.uri:
+        url: https://dl.k8s.io/release/stable.txt
+        return_content: true
+      register: kubectl_version
+    - name: Download kubectl
+      ansible.builtin.uri:
+        url: "https://dl.k8s.io/release/{{ kubectl_version.content }}/bin/linux/amd64/kubectl"
+        dest: /tmp/
+      register: kubectl
+    - name: Get file hash for kubectl
+      ansible.builtin.uri:
+        url: "https://dl.k8s.io/{{ kubectl_version.content }}/bin/linux/amd64/kubectl.sha256"
+        return_content: true
+      register: kubectl_sha256
+    - name: Compare hash values
+      ansible.builtin.shell: echo "{{ kubectl_sha256.content }} kubectl" | sha256sum --check
+      register: cmd_output
+      failed_when:
+        - "'OK' not in cmd_output.stdout"
+    - name: Show download result
+      ansible.builtin.debug:
+        msg: "Download of {{ cmd_output.stdout }}"
+    - name: Move kubectl to final location and set permissions
+      ansible.builtin.file:
+        src: "{{ kubectl.path }}"
+        dest: "/usr/local/bin/kubectl"
+        state: hard
+        owner: root
+        group: root
+        mode: "+x"
+      become: true
+    - name: Check if kubectl is installed
+      ansible.builtin.command: kubectl version --output=yaml
+      register: client 
+      failed_when: client.rc > 1
+    - name: kubectl client version
+      ansible.builtin.debug:
+        msg: "{{ client.stdout_lines }}"
+    - name: Download kind
+      ansible.builtin.uri:
+        url: "https://kind.sigs.k8s.io/dl/v0.11.1/kind-linux-amd64"
+        dest: /tmp/
+      register: kind
+    - name: Move kind to final location and set permissions
+      ansible.builtin.file:
+        src: "{{ kind.path }}"
+        dest: "/usr/local/bin/kind"
+        state: hard
+        owner: root
+        group: root
+        mode: "+x"
+      become: true
+    - name: Download kind lab configuration
+      ansible.builtin.uri:
+        url: https://raw.githubusercontent.com/lockfale/Malicious_Containers_Workshop/main/DC31/kind-lab-config.yaml
+    - name: Tell user to exit terminal and start a new one
+      ansible.builtin.debug:
+        msg: "Step 3 of setup finished, close this terminal and open a new one."
