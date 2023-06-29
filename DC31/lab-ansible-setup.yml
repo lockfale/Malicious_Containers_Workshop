@@ -38,9 +38,7 @@
       register: kubectl_sha256
 
     - name: Compare hash values
-      ansible.builtin.shell: echo "{{ kubectl_sha256.content }} kubectl" | sha256sum --check
-      args:
-        chdir: /tmp/
+      ansible.builtin.shell: echo "{{ kubectl_sha256.content }} /tmp/kubectl" | sha256sum --check
       register: cmd_output
       failed_when:
         - "'OK' not in cmd_output.stdout"
@@ -51,7 +49,7 @@
 
     - name: Move kubectl to final location and set permissions
       ansible.builtin.copy:
-        src: /tmp/kubectl
+        src: "{{ kubectl.path }}"
         dest: "/usr/local/bin/kubectl"
         owner: root
         group: root
@@ -75,7 +73,7 @@
 
     - name: Move kind to final location and set permissions
       ansible.builtin.copy:
-        src: /tmp/kind
+        src: "{{ kind.path }}"
         dest: "/usr/local/bin/kind"
         owner: root
         group: root
