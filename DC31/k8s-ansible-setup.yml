@@ -16,15 +16,25 @@
         name: "{{ lookup('env', 'USER') }}"
         groups: docker
         append: true
+      become: true
+    - name: Get latest stable kubectl version
+      uri:
+        url: https://dl.k8s.io/release/stable.txt
+        return_content: yes
+      register: kubectl_version
     - name: Download kubectl
-      ansible.builtin.shell: curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+      uri:
+        url: "https://dl.k8s.io/release/{{ kubectl_version.content }}/bin/linux/amd64/kubectl"
     - name: Get file hash for kubectl
-      ansible.builtin.shell: curl -LO "https://dl.k8s.io/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl.sha256"
+      uri:
+        url: "https://dl.k8s.io/{{ kubectl_version }}/bin/linux/amd64/kubectl.sha256"
+        return_content: yes
+      register: kubectl_sha256
     - name: Compare hash values
-      ansible.builtin.shell: set -o pipefail && echo "$(<kubectl.sha256) kubectl" | sha256sum --check
+      ansible.builtin.shell: echo "{{ kubectl_sha256 }} kubectl" | sha256sum --check
       register: cmd_output
-      changed_when:
-        - "'kubectl:OK' in cmd_output.stdout"
+      failed_when:
+        - "'OK' not in cmd_output.stdout"
     - name: Show download result
       ansible.builtin.debug:
         msg: "Download of {{ cmd_output.stdout }}"
