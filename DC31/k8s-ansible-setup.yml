@@ -10,6 +10,7 @@
           - etcd-client
           - jq
           - unzip
+      become: true
     - name: Add current user to Docker group
       ansible.builtin.user:
         name: "{{ lookup('env', 'USER') }}"
