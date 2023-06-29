@@ -24,6 +24,7 @@
         path: "/tmp/lab-setup"
         state: directory
         mode: '0755'
+      register: download
 
     - name: Get latest stable kubectl version
       ansible.builtin.uri:
@@ -34,7 +35,7 @@
     - name: Download kubectl
       ansible.builtin.uri:
         url: "https://dl.k8s.io/release/{{ kubectl_version.content }}/bin/linux/amd64/kubectl"
-        dest: /tmp/lab-setup/kubectl
+        dest: "{{ download.path }}/kubectl"
       register: kubectl
 
     - name: Get file hash for kubectl
@@ -74,7 +75,7 @@
     - name: Download kind
       ansible.builtin.uri:
         url: "https://kind.sigs.k8s.io/dl/v0.11.1/kind-linux-amd64"
-        dest: /tmp/lab-setup/kind
+        dest: "{{ download.path }}/kind"
       register: kind
 
     - name: Move kind to final location and set permissions
