@@ -8,7 +8,7 @@ Welcome to the docker/kubernetes training, the following destructions will help 
 
 
 **1. Create a new VM instance.** Select a medium for this session, so that you can run a large number of nodes and pods. 
-This should come out to around the following cost per month: $26.46, or $0.03 cents an hour from your free credits you get by registering a new email address. 
+This should come out to around the following cost per month: $27.46, or $0.03 cents an hour from your free credits you get by registering a new email address. 
         Goto: https://cloud.google.com/free 
         Create an account, or log in. 
 ![compute_engine](https://user-images.githubusercontent.com/32903188/182159860-24dde591-f87f-4e70-8df1-be6e27455108.png)
