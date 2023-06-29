@@ -31,39 +31,19 @@ This should come out to around the following cost per month: $26.46, or $0.03 ce
 
 ![ssh_connect](https://user-images.githubusercontent.com/32903188/182160599-ac61a507-3f02-4a3f-865f-39416aed9e31.png)
 
-**3. Run the following setup commands: ** 
+**3. Run the following setup commands:** 
 
-`sudo apt update && sudo apt install ansible python3-pip docker.io etcd-client unzip jq`
+`sudo apt update && sudo apt install -y python3-pip`
 
-`sudo usermod -aG docker $USER`
+`sudo pip install ansible`
 
+`export PATH=$PATH:/home/$USER/.local/bin`
 
-**4. Install the Kubectl binary:**
+`curl -LO https://raw.githubusercontent.com/lockfale/Malicious_Containers_Workshop/main/DC31/k8s-ansible-setup.yml`
 
- `curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"` 
-
- `curl -LO "https://dl.k8s.io/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl.sha256"`
-
- `echo "$(<kubectl.sha256) kubectl" | sha256sum --check`
-
-* Should see a "kubectl:OK" message. *
- 
- `chmod +x kubectl` 
- 
- `sudo mv ./kubectl /usr/local/bin/kubectl` 
- 
- `rm kubectl.sha256` 
- 
- **5. Install Kind** (Kubernetes in Docker) 
- 
- `curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.11.1/kind-linux-amd64` 
- 
- `chmod +x ./kind`
- 
- `sudo mv ./kind /usr/local/bin/kind ` 
-   
+`ansible-playbook k8s-ansible-setup.yml`
   
-  **6. Start a new terminal** - then `exit` the existing one. 
+**4. Start a new terminal** - then `exit` the existing one. 
   
   `kind version` 
   
@@ -86,11 +66,10 @@ kubernetes
 
 **7. Build Lab Cluster ** 
 Note that the YAML file is annotated, so you can understand how it works. 
- Create a file: 
- `nano kind-lab-config.yaml` 
- Open the following link, and paste the contents into the file: [https://github.com/lockfale/DC30_Malicious_Containers_Workshop/blob/main/kind-lab-config.yaml ](https://raw.githubusercontent.com/lockfale/Malicious_Containers_Workshop/main/Bsides_Charleston_22/kind-lab-config.yaml)
- 
- Save the file. 
+ The ansible playbook downloaded a file for you: 
+ `ls kind-lab-config.yaml` 
+
+ Run the following command to setup the kind cluster
  
  `kind create cluster --config=kind-lab-config.yaml` 
  
