@@ -65,9 +65,13 @@ kubernetes
 
 
 **5. Build Lab Cluster** 
-Note that the YAML file is annotated, so you can understand how it works. 
+
  The ansible playbook downloaded a file for you: 
- `ls kind-lab-config.yaml` 
+ `less kind-lab-config.yaml` 
+
+ Note that the YAML file is annotated, so you can understand how it works. 
+
+ Press &darr; and &uarr; to scroll through file, and `q` to exit
 
  Run the following command to setup the kind cluster
  
