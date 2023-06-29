@@ -50,7 +50,7 @@
         mode: "+x"
       become: true
     - name: Check if kubectl is installed
-      ansible.builtin.command: kubectl version --client
+      ansible.builtin.command: kubectl version --output=yaml
       register: client 
       failed_when: client.rc > 1
     - name: kubectl client version
