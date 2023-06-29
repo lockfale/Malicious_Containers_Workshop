@@ -56,7 +56,27 @@
     - name: kubectl client version
       ansible.builtin.debug:
         msg: "{{ client.stdout_lines }}"
-      
+    - name: Download kind
+      ansible.builtin.uri:
+        url: "https://kind.sigs.k8s.io/dl/v0.11.1/kind-linux-amd64"
+        dest: /tmp/
+      register: kind
+    - name: Move kind to final location and set permissions
+      ansible.builtin.file:
+        src: "{{ kind.path }}"
+        dest: "/usr/local/bin/kind"
+        state: hard
+        owner: root
+        group: root
+        mode: "+x"
+      become: true
+    - name: Download kind lab configuration
+      ansible.builtin.uri:
+        url: https://raw.githubusercontent.com/lockfale/Malicious_Containers_Workshop/main/DC31/kind-lab-config.yaml
+    - name: Tell user to exit terminal and start a new one
+      ansible.builtin.debug:
+        msg: "First part of setup finished, close this terminal and open a new one."
+
     # - name: Create a namespace for privesc
     #   ansible.builtin.command: kubectl apply -f k8s-manifests/namespaces.yaml
     #   register: cmd_output
