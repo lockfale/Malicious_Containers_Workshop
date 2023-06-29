@@ -85,6 +85,32 @@
         url: https://raw.githubusercontent.com/lockfale/Malicious_Containers_Workshop/main/DC31/kind-lab-config.yaml
         dest: "{{ playbook_dir }}/kind-lab-config.yaml"
 
+    - name: Download k8s cluster ansible playbook
+      ansible.builtin.uri:
+        url: https://raw.githubusercontent.com/lockfale/Malicious_Containers_Workshop/dc31/DC31/k8s-ansible-setup.yaml
+        dest: "{{ playbook_dir }}/k8s-ansible-setup.yaml"
+
+    - name: Create k8s-manifest directory
+      ansible.builtin.file:
+        path: "{{ playbook_dir }}/k8s-manifests"
+        state: directory
+        mode: '0750'
+
+    - name: Download k8s clusterrole manifest
+      ansible.builtin.uri:
+        url: https://raw.githubusercontent.com/lockfale/Malicious_Containers_Workshop/dc31/DC31/k8s-manifests/clusterroles.yaml
+        dest: "{{ playbook_dir }}/k8s-manifests/clusterroles.yaml"
+
+    - name: Download k8s namespace manifest
+      ansible.builtin.uri:
+        url: https://raw.githubusercontent.com/lockfale/Malicious_Containers_Workshop/dc31/DC31/k8s-manifests/namespaces.yaml
+        dest: "{{ playbook_dir }}/k8s-manifests/namespaces.yaml"
+
+    - name: Download k8s pods manifest
+      ansible.builtin.uri:
+        url: https://raw.githubusercontent.com/lockfale/Malicious_Containers_Workshop/dc31/DC31/k8s-manifests/pods.yaml
+        dest: "{{ playbook_dir }}/k8s-manifests/pods.yaml"
+
     - name: Tell user to exit terminal and start a new one
       ansible.builtin.debug:
         msg: "Step 3 of setup finished, close this terminal and open a new one."
