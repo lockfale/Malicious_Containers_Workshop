@@ -55,7 +55,7 @@
       failed_when: client.rc > 1
     - name: kubectl client version
       ansible.builtin.debug:
-        msg: client.stdout
+        msg: "{{ client.stdout }}"
       
     # - name: Create a namespace for privesc
     #   ansible.builtin.command: kubectl apply -f k8s-manifests/namespaces.yaml
