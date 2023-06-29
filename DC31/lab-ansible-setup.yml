@@ -19,6 +19,12 @@
         append: true
       become: true
 
+    - name: Create a directory for downloads
+      ansible.builtin.file:
+        path: "/tmp/lab-setup"
+        state: directory
+        mode: '0755'
+
     - name: Get latest stable kubectl version
       ansible.builtin.uri:
         url: https://dl.k8s.io/release/stable.txt
@@ -28,7 +34,7 @@
     - name: Download kubectl
       ansible.builtin.uri:
         url: "https://dl.k8s.io/release/{{ kubectl_version.content }}/bin/linux/amd64/kubectl"
-        dest: /tmp/kubectl
+        dest: /tmp/lab-setup/kubectl
       register: kubectl
 
     - name: Get file hash for kubectl
@@ -38,7 +44,7 @@
       register: kubectl_sha256
 
     - name: Compare hash values
-      ansible.builtin.shell: echo "{{ kubectl_sha256.content }} /tmp/kubectl" | sha256sum --check
+      ansible.builtin.shell: echo "{{ kubectl_sha256.content }} {{ kubectl.path }}" | sha256sum --check
       register: cmd_output
       failed_when:
         - "'OK' not in cmd_output.stdout"
@@ -68,7 +74,7 @@
     - name: Download kind
       ansible.builtin.uri:
         url: "https://kind.sigs.k8s.io/dl/v0.11.1/kind-linux-amd64"
-        dest: /tmp/kind
+        dest: /tmp/lab-setup/kind
       register: kind
 
     - name: Move kind to final location and set permissions
@@ -110,6 +116,11 @@
       ansible.builtin.uri:
         url: https://raw.githubusercontent.com/lockfale/Malicious_Containers_Workshop/dc31/DC31/k8s-manifests/pods.yaml
         dest: "{{ playbook_dir }}/k8s-manifests/pods.yaml"
+
+    - name: Clean up
+      ansible.builtin.file:
+        path: "/tmp/lab-setup"
+        state: absent
 
     - name: Tell user to exit terminal and start a new one
       ansible.builtin.debug:
