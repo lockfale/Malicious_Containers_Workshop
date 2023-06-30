@@ -3,11 +3,11 @@ apiVersion: rbac.authorization.k8s.io/v1
 # This cluster role binding allows anyone in the "manager" group to read secrets in any namespace.
 kind: ClusterRoleBinding
 metadata:
-  name: read-secrets
+  name: read-secrets-clusterrolebinding
 subjects:
-- kind: ServiceAccount
-  name: read-secrets # Name is case sensitive
-  namespace: pls-dont-hack-me
+- kind: Group
+  name: system:serviceaccounts:pls-dont-hack-me # Name is case sensitive
+  apiGroup: rbac.authorization.k8s.io
 roleRef:
   kind: ClusterRole
   name: secret-reader
