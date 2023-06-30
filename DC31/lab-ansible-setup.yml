@@ -108,6 +108,16 @@
         url: https://raw.githubusercontent.com/lockfale/Malicious_Containers_Workshop/dc31/DC31/k8s-manifests/clusterroles.yaml
         dest: "{{ playbook_dir }}/k8s-manifests/clusterroles.yaml"
 
+    - name: Download k8s pods manifest
+      ansible.builtin.uri:
+        url: https://raw.githubusercontent.com/lockfale/Malicious_Containers_Workshop/dc31/DC31/k8s-manifests/clusterrolebindings.yaml
+        dest: "{{ playbook_dir }}/k8s-manifests/clusterrolebindings.yaml"
+
+    - name: Download k8s service accounts manifest
+      ansible.builtin.uri:
+        url: https://raw.githubusercontent.com/lockfale/Malicious_Containers_Workshop/dc31/DC31/k8s-manifests/serviceaccounts.yaml
+        dest: "{{ playbook_dir }}/k8s-manifests/serviceaccounts.yaml"
+
     - name: Download k8s namespace manifest
       ansible.builtin.uri:
         url: https://raw.githubusercontent.com/lockfale/Malicious_Containers_Workshop/dc31/DC31/k8s-manifests/namespaces.yaml

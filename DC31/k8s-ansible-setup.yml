@@ -3,11 +3,20 @@
   name: Setup Kubernetes cluster
   gather_facts: false
   tasks:
-    - name: Create a namespace for privesc
+    - name: Create namespaces
       ansible.builtin.command: kubectl apply -f k8s-manifests/namespaces.yaml
-      register: cmd_output
+      register: kubectl_run
       changed_when:
-        - "'created' in cmd_output.stdout"
+        - "'created' in kubectl_run.stdout"
 
-    - name: Create a ClusterRole and ClusterRoleBinding
+    - name: Create ClusterRoles
       ansible.builtin.command: kubectl apply -f k8s-manifests/clusterroles.yaml
+      register: kubectl_run
+      changed_when:
+        - "'created' in kubectl_run.stdout"
+
+    - name: Create ClusterRoleBindings
+      ansible.builtin.command: kubectl apply -f k8s-manifests/clusterrolebindings.yaml
+      register: kubectl_run
+      changed_when:
+        - "'created' in kubectl_run.stdout"
