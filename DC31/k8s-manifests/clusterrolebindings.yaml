@@ -7,6 +7,7 @@ metadata:
 subjects:
 - kind: ServiceAccount
   name: read-secrets # Name is case sensitive
+  namespace: pls-dont-hack-me
 roleRef:
   kind: ClusterRole
   name: secret-reader

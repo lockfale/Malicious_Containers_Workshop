@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: myapp
-        image: ubuntu:22:04
+        image: ubuntu:22.04
         command: ["/bin/sleep", "infinity"]
         resources:
           limits:
@@ -23,5 +23,5 @@ spec:
             cpu: "500m"
         ports:
         - containerPort: 80
-    serviceAccountName: read-secrets
+      serviceAccountName: read-secrets
 

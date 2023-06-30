@@ -15,8 +15,20 @@
       changed_when:
         - "'created' in kubectl_run.stdout"
 
+    - name: Create Service Accounts
+      ansible.builtin.command: kubectl apply -f k8s-manifests/serviceaccounts.yaml
+      register: kubectl_run
+      changed_when:
+        - "'created' in kubectl_run.stdout"
+
     - name: Create ClusterRoleBindings
       ansible.builtin.command: kubectl apply -f k8s-manifests/clusterrolebindings.yaml
+      register: kubectl_run
+      changed_when:
+        - "'created' in kubectl_run.stdout"
+
+    - name: Create Deployments
+      ansible.builtin.command: kubectl apply -f k8s-manifests/deployments.yaml
       register: kubectl_run
       changed_when:
         - "'created' in kubectl_run.stdout"
