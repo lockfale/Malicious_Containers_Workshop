@@ -1212,15 +1212,16 @@ From inside a container in a pod with attached service account
 cd /run/secrets/kubernetes.io/serviceaccount && ls -l
 ```
 
-Assign the token to variable for later (optional)
+Set the namespace as well
+```
+NAMESPACE=lab-namespace
+```
+
+Optionally: Assign the token to variable for later
 ```
 TOKEN=$(cat token)
 ```
 
-Please don't hack me
-```
-NAMESPACE=pls-dont-hack-me
-```
 
 or use some other tool to do the curl request below:
 
@@ -1233,3 +1234,34 @@ https://kubernetes.default.svc/api/v1/namespaces/$NAMESPACE/pods
 ca.crt, etc are all provided in the /run/secrets/kubernetes.io/serviceaccount directory. We read token straight from the file and inserted it in the curl command above. Likewise, Kubernetes internal DNS resolves kubernetes.default.svc to the API server IP for you.
 
 You'll get a JSON response back that you can parse yourself.
+
+Likely it was a forbidden response.
+
+But it did tell you what rights you need. We could create a whole new service account and assign that to the pod (proper way) but to save time, can just give rights 
+to the current account. Open a new terminal to the server.
+
+```
+kubectl create role pod-reader --verb=get --verb=list --verb=watch --resource=pods --namespace lab-namespace
+```
+
+```
+kubectl create rolebinding lab-namespace-default-pod-reader --role pod-reader --serviceaccount=lab-namespace:default --namespace lab-namespace
+```
+
+Exit/close this window.  Back in the other window:
+
+```
+kubectl attach shell-container -c shell-container -i -t -n lab-namespace
+```
+
+```
+cd /run/secrets/kubernetes.io/serviceaccount && NAMESPACE=lab-namespace
+```
+
+```
+curl --cacert ca.crt \
+-H "Authorization: Bearer $(cat token)" \
+https://kubernetes.default.svc/api/v1/namespaces/$NAMESPACE/pods
+```
+
+Now you should see a full response, at least including the pod you're running in.
