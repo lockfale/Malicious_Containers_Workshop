@@ -1180,7 +1180,7 @@ docker stop netwebserver
 ### Slide 186 - Create side-car pod, test nginx, and remove pod (run in conjunction with babby's first pod
 
 ```
-kubectl run -it shell-container --image=alpine/curl:3.14 /bin/ash --namespace lab-namespace
+kubectl run -it shell-container --image=alpine/curl:8.1.2 /bin/ash --namespace lab-namespace
 ```
 
 Get IP from pod description
@@ -1202,6 +1202,10 @@ kubectl delete pod shell-container --namespace lab-namespace
 
 Kubernetes mounts the token info for service accounts inside container to make them available for use
 
+```
+kubectl run -it shell-container --image=alpine/curl:8.1.2 /bin/ash --namespace lab-namespace
+```
+
 From inside a container in a pod with attached service account
 
 ```
@@ -1216,18 +1220,6 @@ TOKEN=$(cat token)
 Please don't hack me
 ```
 NAMESPACE=pls-dont-hack-me
-```
-
-curl may not be installed in container
-
-Assuming you're in an Ubuntu container
-```
-apt update && apt install -y curl
-```
-
-If Alpine
-```
-apk add curl
 ```
 
 or use some other tool to do the curl request below:
