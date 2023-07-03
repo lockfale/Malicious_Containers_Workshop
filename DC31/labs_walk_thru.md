@@ -1265,3 +1265,9 @@ https://kubernetes.default.svc/api/v1/namespaces/$NAMESPACE/pods
 ```
 
 Now you should see a full response, at least including the pod you're running in.
+
+You can exit the pod and if you want to clean up delete the shell-container pod.
+
+```
+kubectl delete pod shell-container -n lab-namespace
+```
