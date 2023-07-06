@@ -89,8 +89,23 @@ You should see 2 worker nodes and a control plane running.
  
 ![get_nodes](https://user-images.githubusercontent.com/32903188/182169551-f2564d91-33e9-4cc6-b4f2-ba9f9cd62834.png)
 
+**7. Setup ngrok account**
 
-**7. Do not turn off the VM after setup whilst waiting for the workshop. Otherwise you'll lose all the above (ephemeral storage).** 
+Sign up for a free ngrok account on https://ngrok.com, you can Oauth through the same Google Account if you want to keep it simple.
+
+You'll likely get redirected to a Setup & Installation page under Getting Started once you're signed in.
+
+Run the command under "Connect your account" in the terminal on your VM
+
+Example: `ngrok config add-authtoken <authtoken>`
+
+Then click on API on the sidebar and create a new API key, add run the command below with the new key
+
+Example: `ngrok config add-api-key <apikey>`
+
+Ngrok will be used for some exercises, so having this step completed ahead of time will be useful.
+
+**8. Do not turn off the VM after setup whilst waiting for the workshop. Otherwise you'll lose all the above (ephemeral storage).** 
 
   
    
