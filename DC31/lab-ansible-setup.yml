@@ -26,6 +26,17 @@
         mode: '0755'
       register: download
 
+    - name: Download ngrok
+      ansible.builtin.uri:
+        url: https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-v3-stable-linux-amd64.tgz
+        dest: "{{ download.path }}/ngrok.tgz"
+      register: ngrok
+
+    - name: Extract ngrok
+      ansible.builtin.unarchive:
+        src: "{{ ngrok.path }}"
+        dest: "/usr/local/bin/" 
+
     - name: Get latest stable kubectl version
       ansible.builtin.uri:
         url: https://dl.k8s.io/release/stable.txt
@@ -54,7 +65,7 @@
       ansible.builtin.debug:
         msg: "Download of {{ cmd_output.stdout }}"
 
-    - name: Move kubectl to final location and set permissions
+    - name: Copy kubectl to final location and set permissions
       ansible.builtin.copy:
         src: "{{ kubectl.path }}"
         dest: "/usr/local/bin/kubectl"
@@ -78,7 +89,7 @@
         dest: "{{ download.path }}/kind"
       register: kind
 
-    - name: Move kind to final location and set permissions
+    - name: Copy kind to final location and set permissions
       ansible.builtin.copy:
         src: "{{ kind.path }}"
         dest: "/usr/local/bin/kind"
