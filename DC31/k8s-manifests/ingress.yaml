@@ -9,7 +9,10 @@ spec:
     - host: ${NGROK_SUBDOMAIN}.ngrok.io
       http:
         paths:
-        - backend:
+        - path: /
+          pathType: Prefix
+          backend:
             service:
               name: prometheus-service
-              port: 8080
+              port: 
+                number: 8080
