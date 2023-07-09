@@ -33,41 +33,65 @@ This should come out to around the following cost per month: $27.46, or $0.03 ce
 
 **3. Run the following setup commands:** 
 
-`sudo apt update && sudo apt install -y python3-pip`
+```
+sudo apt update && sudo apt install -y python3-pip
+```
 
-`sudo pip install ansible`
+```
+sudo pip install ansible
+```
 
-`export PATH=$PATH:/home/$USER/.local/bin`
+```
+export PATH=$PATH:/home/$USER/.local/bin
+```
 
-`curl -LO https://raw.githubusercontent.com/lockfale/Malicious_Containers_Workshop/dc31/DC31/lab-ansible-setup.yml`
+```
+curl -LO https://raw.githubusercontent.com/lockfale/Malicious_Containers_Workshop/dc31/DC31/lab-ansible-setup.yml
+```
 
-`ansible-playbook lab-ansible-setup.yml`
+```
+ansible-playbook lab-ansible-setup.yml
+```
   
 **4. Start a new terminal** - then `exit` the existing one. 
   
-  `kind version` 
+  ```
+  kind version
+  ``` 
   
-  `kind create cluster --image=kindest/node:v1.23.0` 
+  ```
+  kind create cluster --image=kindest/node:v1.23.17
+  ``` 
   
   
 **Note:** by default it’ll pull an old version of Kubernetes so image argument is added to specify newer version of 
 kubernetes
 
 **Note:** kubectl will be one major version ahead of our Kubernetes install but that shouldn't effect our labs
-`kubectl version`
+```
+kubectl version
+```
 
-`docker ps`
+```
+docker ps
+```
 
-`kind get clusters` 
+```
+kind get clusters
+``` 
 
 
-`kind delete cluster` 
+```
+kind delete cluster
+``` 
 
 
 **5. Build Lab Cluster** 
 
  The ansible playbook downloaded a file for you: 
- `less kind-lab-config.yaml` 
+ ```
+ less kind-lab-config.yaml
+ ``` 
 
  Note that the YAML file is annotated, so you can understand how it works. 
 
@@ -75,15 +99,21 @@ kubernetes
 
  Run the following command to setup the kind cluster
  
- `kind create cluster --config=kind-lab-config.yaml` 
+ ```
+ kind create cluster --config=kind-lab-config.yaml
+ ``` 
  
  This may take a couple of minutes, go get a coffee or something. 
  
  **6. Confirm lab is operational**
  
- `kubectl cluster-info --context kind-lab`
+ ```
+ kubectl cluster-info --context kind-lab
+ ```
 
-`kubectl get nodes`
+```
+kubectl get nodes
+```
 
 You should see 2 worker nodes and a control plane running.
  

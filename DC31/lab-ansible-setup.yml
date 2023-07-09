@@ -130,7 +130,7 @@
       register: helm_repo
       changed_when: "'added' in helm_repo.stdout"
 
-    - name: helm repo update
+    - name: Do helm repo update
       ansible.builtin.command: helm repo update
       register: helm_repo
       changed_when: "'added' in helm_repo.stdout"
