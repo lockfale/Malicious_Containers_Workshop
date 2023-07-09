@@ -1,3 +1,4 @@
+---
 apiVersion: v1
 kind: Pod
 metadata:
@@ -17,7 +18,7 @@ spec:
         memory: "256Mi"
         cpu: "500m"
     volumeMounts:
-    - mountPath: /host
+    - mountPath: /controlplane
       name: noderoot
     command: [ "/bin/sh", "-c", "--" ]
     args: [ "while true; do sleep 30; done;" ]
