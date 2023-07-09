@@ -36,6 +36,7 @@
       ansible.builtin.unarchive:
         src: "{{ ngrok.path }}"
         dest: "/usr/local/bin/"
+      become: true
 
     - name: Get latest stable kubectl version
       ansible.builtin.uri:
