@@ -56,12 +56,6 @@
       changed_when:
         - "'created' in kubectl_run.stdout"
 
-    - name: Create Services
-      ansible.builtin.command: kubectl apply -f k8s-manifests/services.yaml
-      register: kubectl_run
-      changed_when:
-        - "'created' in kubectl_run.stdout"
-
     - name: Install promethus for kind clusters
       ansible.builtin.command:
         cmd: |
