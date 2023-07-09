@@ -38,21 +38,15 @@
         dest: "/usr/local/bin/"
       become: true
 
-    - name: Get latest stable kubectl version
-      ansible.builtin.uri:
-        url: https://dl.k8s.io/release/stable.txt
-        return_content: true
-      register: kubectl_version
-
     - name: Download kubectl
       ansible.builtin.uri:
-        url: "https://dl.k8s.io/release/{{ kubectl_version.content }}/bin/linux/amd64/kubectl"
+        url: "https://dl.k8s.io/release/v1.23.17/bin/linux/amd64/kubectl"
         dest: "{{ download.path }}/kubectl"
       register: kubectl
 
     - name: Get file hash for kubectl
       ansible.builtin.uri:
-        url: "https://dl.k8s.io/{{ kubectl_version.content }}/bin/linux/amd64/kubectl.sha256"
+        url: "https://dl.k8s.io/v1.23.17/bin/linux/amd64/kubectl.sha256"
         return_content: true
       register: kubectl_sha256
 
