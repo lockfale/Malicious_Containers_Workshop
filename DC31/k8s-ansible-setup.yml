@@ -14,18 +14,6 @@
       changed_when:
         - "'created' in kubectl_run.stdout"
 
-    - name: Install ngrok ingress controller
-      ansible.builtin.command:
-        cmd: |
-          helm install ngrok-ingress-controller
-          ngrok/kubernetes-ingress-controller
-          --namespace ngrok-ingress
-          --set credentials.apiKey={{ api_key }}
-          --set credentials.authtoken={{ authtoken }}
-      register: ngrok_ingress_install
-      changed_when:
-        - "'STATUS: deployed' in ngrok_ingress_install.stdout"
-
     - name: Create ClusterRoles
       ansible.builtin.command: kubectl apply -f k8s-manifests/clusterroles.yaml
       register: kubectl_run
@@ -78,6 +66,18 @@
       register: helm_install
       changed_when:
         - "'STATUS: deployed' in helm_install.stdout"
+
+    # - name: Install ngrok ingress controller
+    #   ansible.builtin.command:
+    #     cmd: |
+    #       helm install ngrok-ingress-controller
+    #       ngrok/kubernetes-ingress-controller
+    #       --namespace monitoring
+    #       --set credentials.apiKey={{ api_key }}
+    #       --set credentials.authtoken={{ authtoken }}
+    #   register: ngrok_ingress_install
+    #   changed_when:
+    #     - "'STATUS: deployed' in ngrok_ingress_install.stdout"
 
     # - name: Create Ingress
     #   ansible.builtin.command: kubectl apply -f k8s-manifests/ingress.yaml
