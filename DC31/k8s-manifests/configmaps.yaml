@@ -7,6 +7,7 @@ metadata:
     app.kubernetes.io/component: tracee
     app.kubernetes.io/part-of: tracee
   name: tracee-policies
+  namespace: monitoring
 data:
   signatures.yaml: |-
     name: signature_events
@@ -55,6 +56,7 @@ metadata:
     app.kubernetes.io/component: tracee
     app.kubernetes.io/part-of: tracee
   name: tracee-config
+  namespace: monitoring
 data:
   config.yaml: |-
     cache:

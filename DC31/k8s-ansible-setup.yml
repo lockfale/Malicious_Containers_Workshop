@@ -56,6 +56,12 @@
       changed_when:
         - "'created' in kubectl_run.stdout"
 
+    # - name: Create Services
+    #   ansible.builtin.command: kubectl apply -f k8s-manifests/services.yaml
+    #   register: kubectl_run
+    #   changed_when:
+    #     - "'created' in kubectl_run.stdout"
+
     - name: Install promethus for kind clusters
       ansible.builtin.command:
         cmd: |
@@ -73,10 +79,10 @@
       changed_when:
         - "'STATUS: deployed' in helm_install.stdout"
 
-    - name: Create Ingress
-      ansible.builtin.command: kubectl apply -f k8s-manifests/ingress.yaml
-      environment:
-        NGROK_SUBDOMAIN: "{{ lookup('env', 'USER') }}-dc31.ngrok.io"
-      register: kubectl_run
-      changed_when:
-        - "'created' in kubectl_run.stdout"
+    # - name: Create Ingress
+    #   ansible.builtin.command: kubectl apply -f k8s-manifests/ingress.yaml
+    #   environment:
+    #     NGROK_SUBDOMAIN: "{{ lookup('env', 'USER') }}-dc31.ngrok.io"
+    #   register: kubectl_run
+    #   changed_when:
+    #     - "'created' in kubectl_run.stdout"
