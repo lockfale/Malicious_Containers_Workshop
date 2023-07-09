@@ -13,8 +13,12 @@
         cmd: |
           helm install ngrok-ingress-controller
           ngrok/kubernetes-ingress-controller
+          --namespace ngrok-ingress
           --set credentials.apiKey={{ api_key }}
           --set credentials.authtoken={{ authtoken }}
+      register: ngrok_ingress_install
+      changed_when:
+        - "'STATUS: deployed' in ngrok_ingress_install.stdout"
 
     - name: Create namespaces
       ansible.builtin.command: kubectl apply -f k8s-manifests/namespaces.yaml
@@ -58,10 +62,27 @@
       changed_when:
         - "'created' in kubectl_run.stdout"
 
+    - name: Install promethus for kind clusters
+      ansible.builtin.command:
+        cmd: |
+          helm install kind-prometheus prometheus-community/kube-prometheus-stack
+          --namespace monitoring
+          --set prometheus.service.nodePort=30000
+          --set prometheus.service.type=NodePort
+          --set grafana.service.nodePort=31000
+          --set grafana.service.type=NodePort
+          --set alertmanager.service.nodePort=32000
+          --set alertmanager.service.type=NodePort
+          --set prometheus-node-exporter.service.nodePort=32001
+          --set prometheus-node-exporter.service.type=NodePort
+      register: helm_install
+      changed_when:
+        - "'STATUS: deployed' in helm_install.stdout"
+
     - name: Create Ingress
       ansible.builtin.command: kubectl apply -f k8s-manifests/ingress.yaml
-      environment: 
-        NGROK_SUBDOMAIN: "{{ lookup ('env', 'USER') }}-dc31"
+      environment:
+        NGROK_SUBDOMAIN: "{{ lookup('env', 'USER') }}-dc31.ngrok.io"
       register: kubectl_run
       changed_when:
         - "'created' in kubectl_run.stdout"

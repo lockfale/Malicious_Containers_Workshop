@@ -115,10 +115,25 @@
         mode: "+x"
       become: true
 
-    - name: Add helm ngrok 
+    - name: Add helm ngrok repo
       ansible.builtin.command: helm repo add ngrok https://ngrok.github.io/kubernetes-ingress-controller
       register: helm_repo
-      changed_when: "'added' in helm_repo.stdout" 
+      changed_when: "'added' in helm_repo.stdout"
+
+    - name: Add helm prometheus community repo
+      ansible.builtin.command: helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+      register: helm_repo
+      changed_when: "'added' in helm_repo.stdout"
+
+    - name: Add helm charts stable repo
+      ansible.builtin.command: helm repo add stable https://charts.helm.sh/stable
+      register: helm_repo
+      changed_when: "'added' in helm_repo.stdout"
+
+    - name: helm repo update
+      ansible.builtin.command: helm repo update
+      register: helm_repo
+      changed_when: "'added' in helm_repo.stdout"
 
     - name: Download kind
       ansible.builtin.uri:
