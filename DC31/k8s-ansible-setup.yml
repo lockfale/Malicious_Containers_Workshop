@@ -8,6 +8,12 @@
         file: "{{ lookup('env', 'HOME') }}/.config/ngrok/ngrok.yml"
         # variable should be accessed as api_key and authtoken
 
+    - name: Create namespaces
+      ansible.builtin.command: kubectl apply -f k8s-manifests/namespaces.yaml
+      register: kubectl_run
+      changed_when:
+        - "'created' in kubectl_run.stdout"
+
     - name: Install ngrok ingress controller
       ansible.builtin.command:
         cmd: |
@@ -19,12 +25,6 @@
       register: ngrok_ingress_install
       changed_when:
         - "'STATUS: deployed' in ngrok_ingress_install.stdout"
-
-    - name: Create namespaces
-      ansible.builtin.command: kubectl apply -f k8s-manifests/namespaces.yaml
-      register: kubectl_run
-      changed_when:
-        - "'created' in kubectl_run.stdout"
 
     - name: Create ClusterRoles
       ansible.builtin.command: kubectl apply -f k8s-manifests/clusterroles.yaml
