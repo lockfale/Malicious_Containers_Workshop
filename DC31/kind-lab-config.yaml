@@ -2,30 +2,14 @@
 kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
 name: lab
-# patch the generated kubeadm config with some extra settings
-kubeadmConfigPatches:
-- |
-  apiVersion: kubelet.config.k8s.io/v1beta1
-  kind: KubeletConfiguration
-  evictionHard:
-    nodefs.available: "0%"
-# patch it further using a JSON 6902 patch
-kubeadmConfigPatchesJSON6902:
-- group: kubeadm.k8s.io
-  version: v1beta2
-  kind: ClusterConfiguration
-  patch: |
-    - op: add
-      path: /apiServer/certSANs/-
-      value: my-hostname
 # 1 control plane node and 3 workers
 nodes:
-# All nodes need 1.23 version of image instead of older default for version of kind we're using
+# All nodes need 1.27 version of image instead of older default for version of kind we're using
 # the control plane node config
 - role: control-plane
-  image: kindest/node:v1.23.17
+  image: kindest/node:v1.27.3
 # the three workers
 - role: worker
-  image: kindest/node:v1.23.17
+  image: kindest/node:v1.27.3
 - role: worker
-  image: kindest/node:v1.23.17
+  image: kindest/node:v1.27.3
