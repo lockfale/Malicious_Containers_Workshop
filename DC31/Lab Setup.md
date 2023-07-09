@@ -129,10 +129,6 @@ Run the command under "Connect your account" in the terminal on your VM
 
 Example: `ngrok config add-authtoken <authtoken>`
 
-Then click on API on the sidebar and create a new API key, add run the command below with the new key
-
-Example: `ngrok config add-api-key <apikey>`
-
 Ngrok will be used for some exercises, so having this step completed ahead of time will be useful.
 
 **8. Do not turn off the VM after setup whilst waiting for the workshop. Otherwise you'll lose all the above (ephemeral storage).** 
