@@ -1137,9 +1137,40 @@ curl -H 'Metadata-Flavor:Google' http://metadata.google.internal/computeMetadata
 export WORKER1=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' lab-worker)
 ```
 
+Create a tunnel for Grafana:
+```
+ngrok http $WORKER1:31000 --oauth=google --oauth-allow-email=<your.email>@gmail.com
+```
+
+Open the ngrok provided URL
+
+Click through the warning message, login with your Google Account matching the email you provided in the ngrok command
+
+You now have access to your Grafana Dashboard from the internet
+
+Grafana Credentials
+
+Username:
+```
+admin
+```
+Password:
+```
+prom-operator
+```
+
+Commands for other services (if you want to explore later outside of workshop):
+
+Prometheus Tunnel:
 ```
 ngrok http $WORKER1:30000 --oauth=google --oauth-allow-email=<your.email>@gmail.com
 ```
+
+AlertManager:
+```
+ngrok http $WORKER1:32000 --oauth=google --oauth-allow-email=<your.email>@gmail.com
+```
+
 
 ### Slide XXX - Tracee events in Grafana
 
