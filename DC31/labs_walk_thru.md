@@ -1141,7 +1141,24 @@ export WORKER1=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddr
 ngrok http $WORKER1:30000 --oauth=google --oauth-allow-email=<your.email>@gmail.com
 ```
 
+### Slide XXX - Tracee events in Grafana
 
+
+**Adding the Dashboard**
+
+Under top-left menu hamburger menu &rarr; Dashboards
+
+Select New &rarr; Import
+
+In another tab, open the link below and copy the json from there
+
+```
+https://raw.githubusercontent.com/aquasecurity/tracee/main/deploy/grafana/tracee.json
+```
+
+Paste the json in the text box labeled 'Import via panel json'
+
+Click the `[Load]` button
 
 ## Appendix
 
