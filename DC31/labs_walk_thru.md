@@ -1131,6 +1131,16 @@ curl -H 'Metadata-Flavor:Google' http://metadata.google.internal/computeMetadata
 curl -H 'Metadata-Flavor:Google' http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/scopes
 ```
 
+### Slide XXX - Play with Prometheus/Grafana
+
+```
+export WORKER1=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' lab-worker)
+```
+
+```
+ngrok http $WORKER1:30000 --oauth=google --oauth-allow-email=<your.email>@gmail.com
+```
+
 
 
 ## Appendix

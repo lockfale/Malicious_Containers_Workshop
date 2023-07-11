@@ -32,11 +32,11 @@
       changed_when:
         - "'created' in kubectl_run.stdout"
 
-    - name: Create ConfigMaps
-      ansible.builtin.command: kubectl apply -f k8s-manifests/configmaps.yaml
-      register: kubectl_run
-      changed_when:
-        - "'created' in kubectl_run.stdout"
+    # - name: Create ConfigMaps
+    #   ansible.builtin.command: kubectl apply -f k8s-manifests/configmaps.yaml
+    #   register: kubectl_run
+    #   changed_when:
+    #     - "'created' in kubectl_run.stdout"
 
     - name: Create Deployments
       ansible.builtin.command: kubectl apply -f k8s-manifests/deployments.yaml
@@ -63,6 +63,38 @@
           --set alertmanager.service.type=NodePort
           --set prometheus-node-exporter.service.nodePort=32001
           --set prometheus-node-exporter.service.type=NodePort
+          --values helm-config/grafana-config.yaml
+      register: helm_install
+      changed_when:
+        - "'STATUS: deployed' in helm_install.stdout"
+
+    - name: Install promtail to grafana
+      ansible.builtin.command:
+        cmd: |
+          helm upgrade
+          --install promtail grafana/promtail
+          --values helm-config/promtail-config.yaml
+          --namespace monitoring
+      register: helm_install
+      changed_when:
+        - "'STATUS: deployed' in helm_install.stdout"
+
+    - name: Install loki
+      ansible.builtin.command:
+        cmd: |
+          helm upgrade
+          --install loki grafana/loki-distributed
+          --namespace monitoring
+      register: helm_install
+      changed_when:
+        - "'STATUS: deployed' in helm_install.stdout"
+
+    - name: Install tracee
+      ansible.builtin.command:
+        cmd: |
+          helm install tracee aqua/tracee
+          --namespace tracee-system
+          --set hostPID=true
       register: helm_install
       changed_when:
         - "'STATUS: deployed' in helm_install.stdout"

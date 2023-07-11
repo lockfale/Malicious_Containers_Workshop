@@ -116,12 +116,12 @@
         mode: "+x"
       become: true
 
-    - name: Add helm ngrok repo
-      ansible.builtin.command: helm repo add ngrok https://ngrok.github.io/kubernetes-ingress-controller
-      register: helm_repo
-      changed_when: "'added' in helm_repo.stdout"
+    # - name: Add ngrok helm repo
+    #   ansible.builtin.command: helm repo add ngrok https://ngrok.github.io/kubernetes-ingress-controller
+    #   register: helm_repo
+    #   changed_when: "'added' in helm_repo.stdout"
 
-    - name: Add helm prometheus community repo
+    - name: Add prometheus community helm repo
       ansible.builtin.command: helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
       register: helm_repo
       changed_when: "'added' in helm_repo.stdout"
@@ -131,10 +131,20 @@
       register: helm_repo
       changed_when: "'added' in helm_repo.stdout"
 
+    - name: Add Grafana helm charts repo 
+      ansible.builtin.command: helm repo add grafana https://grafana.github.io/helm-charts
+      register: helm_repo
+      changed_when: "'added' in helm_repo.stdout"
+
+    - name: Add tracee helm charts repo
+      ansible.builtin:command: helm repo add aqua https://aquasecurity.github.io/helm-charts/
+      register: helm_repo
+      changed_when: "'added' in helm_repo.stdout"
+
     - name: Do helm repo update
       ansible.builtin.command: helm repo update
       register: helm_repo
-      changed_when: "'added' in helm_repo.stdout"
+      changed_when: "'Update Complete' in helm_repo.stdout"
 
     - name: Download kind
       ansible.builtin.uri:
@@ -206,11 +216,27 @@
       ansible.builtin.uri:
         url: https://raw.githubusercontent.com/lockfale/Malicious_Containers_Workshop/dc31/DC31/k8s-manifests/ingress.yaml
         dest: "{{ playbook_dir }}/k8s-manifests/ingress.yaml"
-  
+
     - name: Download k8s evilpod manifest
       ansible.builtin.uri:
         url: https://raw.githubusercontent.com/lockfale/Malicious_Containers_Workshop/dc31/DC31/k8s-manifests/evilpod.yaml
         dest: "{{ playbook_dir }}/k8s-manifests/evilpod.yaml"
+
+    - name: Create helm config directory
+      ansible.builtin.file:
+        path: "{{ playbook_dir }}/helm-config"
+        state: directory
+        mode: '0750'
+
+    - name: Download grafana helm config
+      ansible.builtin.uri:
+        url: https://raw.githubusercontent.com/lockfale/Malicious_Containers_Workshop/dc31/DC31/helm-config/grafana-config.yaml
+        dest: "{{ playbook_dir }}/helm-config/grafana-config.yaml"
+
+    - name: Download prom helm config
+      ansible.builtin.uri:
+        url: https://raw.githubusercontent.com/lockfale/Malicious_Containers_Workshop/dc31/DC31/helm-config/grafana-config.yaml
+        dest: "{{ playbook_dir }}/promtail-config/promtail-config.yaml"
 
     - name: Clean up
       ansible.builtin.file:
