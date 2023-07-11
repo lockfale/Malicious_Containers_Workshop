@@ -1,0 +1,28 @@
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: developer-developer
+  namespace: pls-dont-hack-me
+subjects:
+- kind: ServiceAccount
+  name: developer
+  namespace: pls-dont-hack-me
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: developer
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: devops-deployment
+  namespace: pls-dont-hack-me
+subjects:
+- kind: ServiceAccount
+  name: deployment-svc
+  namespace: pls-dont-hack-me
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: devops
