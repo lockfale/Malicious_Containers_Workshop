@@ -43,6 +43,12 @@
       register: kubectl_run
       changed_when:
         - "'created' in kubectl_run.stdout"
+  
+    - name: Create Pods
+      ansible.builtin.command: kubectl apply -f k8s-manifests/pods.yaml
+      register: kubectl_run
+      changed_when:
+        - "'created' in kubectl_run.stdout"
 
     # - name: Create Services
     #   ansible.builtin.command: kubectl apply -f k8s-manifests/services.yaml
@@ -95,6 +101,7 @@
           helm install tracee aqua/tracee
           --namespace tracee-system
           --set hostPID=true
+          --version 0.15.1
       register: helm_install
       changed_when:
         - "'STATUS: deployed' in helm_install.stdout"
