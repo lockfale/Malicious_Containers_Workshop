@@ -2,13 +2,13 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: evilpod
+  name: evil-pod
   namespace: lab-namespace
   labels:
-    app: pentest
+    app: evil-pod
 spec:
   containers:
-  - name: evilpod
+  - name: evil-pod
     image: ubuntu
     resources:
       requests:
