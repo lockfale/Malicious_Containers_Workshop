@@ -137,7 +137,7 @@
       changed_when: "'added' in helm_repo.stdout"
 
     - name: Add tracee helm charts repo
-      ansible.builtin:command: helm repo add aqua https://aquasecurity.github.io/helm-charts/
+      ansible.builtin.command: helm repo add aqua https://aquasecurity.github.io/helm-charts/
       register: helm_repo
       changed_when: "'added' in helm_repo.stdout"
 
@@ -160,6 +160,13 @@
         group: root
         mode: "+x"
       become: true
+
+    - name: Create kind autocomplete
+      ansible.builtin.shell: |
+        kind completion bash > {{ lookup('env', 'HOME') }}/.kind_completion
+        echo "source {{ lookup('env', 'HOME') }}/.kind_completion >> {{ lookup('env', 'HOME') }}/.bashrc"
+      args:
+        creates: "{{ lookup('env', 'HOME') }}/.kind_completion"
 
     - name: Download kind lab configuration
       ansible.builtin.uri:
