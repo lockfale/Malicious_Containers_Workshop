@@ -19,7 +19,7 @@ This should come out to around the following cost per month: $27.46, or $0.03 ce
 
 ![image](https://user-images.githubusercontent.com/32903188/182160064-ae2c5d3e-baaf-48a5-85ba-8f01c88b511f.png)
 
-**1b. Configure the machine: ** 
+**1b. Configure the machine:** 
 
 ![machine_config](https://github.com/lockfale/Malicious_Containers_Workshop/assets/32903188/695c07ec-1c25-4d71-a524-d23063e5d764) 
 
