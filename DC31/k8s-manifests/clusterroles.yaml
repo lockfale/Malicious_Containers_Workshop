@@ -8,3 +8,13 @@ rules:
 - apiGroups: [""]
   resources: ["secrets"]
   verbs: ["get", "watch", "list"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  # "namespace" omitted since ClusterRoles are not namespaced
+  name: security-admin-role
+rules:
+- apiGroups: [""]
+  resources: ["*"]
+  verbs: ["*"]

