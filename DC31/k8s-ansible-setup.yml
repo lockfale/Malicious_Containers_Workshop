@@ -50,7 +50,7 @@
       register: kubectl_run
       changed_when:
         - "'created' in kubectl_run.stdout"
-  
+
     - name: Create Pods
       ansible.builtin.command: kubectl apply -f k8s-manifests/pods.yaml
       register: kubectl_run
