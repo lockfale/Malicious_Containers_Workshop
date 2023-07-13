@@ -70,7 +70,7 @@ ansible-playbook lab-ansible-setup.yml
 **Note:** by default it’ll pull an old version of Kubernetes so image argument is added to specify newer version of 
 kubernetes
 
-**Note:** kubectl may be one major version ahead of our Kubernetes install but that shouldn't effect our labs
+**Note:** kubectl may be one minor version ahead of our Kubernetes install but that shouldn't effect our labs
 ```
 kubectl version
 ```
