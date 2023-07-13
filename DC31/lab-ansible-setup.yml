@@ -106,6 +106,7 @@
 
     - name: Compare hash values
       ansible.builtin.shell: |
+        set -o pipefail
         echo "{{ helm_sha256.content | trim }} {{ helm.path }}" | sha256sum --check
       args:
         executable: /usr/bin/bash
