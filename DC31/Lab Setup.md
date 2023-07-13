@@ -21,7 +21,10 @@ This should come out to around the following cost per month: $27.46, or $0.03 ce
 
 **1b. Configure the machine: ** 
 
-![machine_config](https://user-images.githubusercontent.com/32903188/182160209-e7609477-f3e6-4c77-b2de-ad1a17b886c4.png)
+![machine_config](https://github.com/lockfale/Malicious_Containers_Workshop/assets/32903188/695c07ec-1c25-4d71-a524-d23063e5d764) 
+
+
+
 
 **1c. Configure the boot disk and image size.** 
 ![boot_disk](https://user-images.githubusercontent.com/32903188/182160383-ebeb8930-ab12-4a36-8595-ba71622ce26c.png)
