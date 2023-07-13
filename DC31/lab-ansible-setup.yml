@@ -60,6 +60,8 @@
       ansible.builtin.shell: |
         set -o pipefail
         echo "{{ kubectl_sha256.content | trim }} {{ kubectl.path }}" | sha256sum --check
+      args:
+        executable: /usr/bin/bash
       register: cmd_output
       failed_when:
         - "'OK' not in cmd_output.stdout"
@@ -104,8 +106,9 @@
 
     - name: Compare hash values
       ansible.builtin.shell: |
-        set -o pipefail
         echo "{{ helm_sha256.content | trim }} {{ helm.path }}" | sha256sum --check
+      args:
+        executable: /usr/bin/bash
       register: cmd_output
       failed_when:
         - "'OK' not in cmd_output.stdout"
@@ -180,7 +183,7 @@
 
     - name: Download kind lab configuration
       ansible.builtin.uri:
-        url: https://raw.githubusercontent.com/lockfale/Malicious_Containers_Workshop/main/DC31/kind-lab-config.yaml
+        url: https://raw.githubusercontent.com/lockfale/Malicious_Containers_Workshop/dc31/DC31/kind-lab-config.yaml
         dest: "{{ playbook_dir }}/kind-lab-config.yaml"
 
     - name: Download k8s cluster ansible playbook
@@ -267,8 +270,8 @@
 
     - name: Download prom helm config
       ansible.builtin.uri:
-        url: https://raw.githubusercontent.com/lockfale/Malicious_Containers_Workshop/dc31/DC31/helm-config/grafana-config.yaml
-        dest: "{{ playbook_dir }}/promtail-config/promtail-config.yaml"
+        url: https://raw.githubusercontent.com/lockfale/Malicious_Containers_Workshop/dc31/DC31/helm-config/promtail-config.yaml
+        dest: "{{ playbook_dir }}/helm-config/promtail-config.yaml"
 
     - name: Clean up
       ansible.builtin.file:

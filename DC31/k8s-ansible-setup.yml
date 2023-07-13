@@ -20,6 +20,12 @@
       changed_when:
         - "'created' in kubectl_run.stdout"
 
+    - name: Create Roles
+      ansible.builtin.command: kubectl apply -f k8s-manifests/roles.yaml
+      register: kubectl_run
+      changed_when:
+        - "'created' in kubectl_run.stdout"
+
     - name: Create Service Accounts
       ansible.builtin.command: kubectl apply -f k8s-manifests/serviceaccounts.yaml
       register: kubectl_run
@@ -28,6 +34,12 @@
 
     - name: Create ClusterRoleBindings
       ansible.builtin.command: kubectl apply -f k8s-manifests/clusterrolebindings.yaml
+      register: kubectl_run
+      changed_when:
+        - "'created' in kubectl_run.stdout"
+
+    - name: Create RoleBindings
+      ansible.builtin.command: kubectl apply -f k8s-manifests/rolebindings.yaml
       register: kubectl_run
       changed_when:
         - "'created' in kubectl_run.stdout"
@@ -50,11 +62,11 @@
       changed_when:
         - "'created' in kubectl_run.stdout"
 
-    # - name: Create Services
-    #   ansible.builtin.command: kubectl apply -f k8s-manifests/services.yaml
-    #   register: kubectl_run
-    #   changed_when:
-    #     - "'created' in kubectl_run.stdout"
+    - name: Create Services
+      ansible.builtin.command: kubectl apply -f k8s-manifests/services.yaml
+      register: kubectl_run
+      changed_when:
+        - "'created' in kubectl_run.stdout"
 
     - name: Install promethus for kind clusters
       ansible.builtin.command:

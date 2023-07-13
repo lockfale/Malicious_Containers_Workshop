@@ -60,14 +60,14 @@ ansible-playbook lab-ansible-setup.yml
   ``` 
   
   ```
-  kind create cluster --image=kindest/node:v1.23.17
+  kind create cluster --image=kindest/node:v1.27.3
   ``` 
   
   
 **Note:** by default it’ll pull an old version of Kubernetes so image argument is added to specify newer version of 
 kubernetes
 
-**Note:** kubectl will be one major version ahead of our Kubernetes install but that shouldn't effect our labs
+**Note:** kubectl may be one major version ahead of our Kubernetes install but that shouldn't effect our labs
 ```
 kubectl version
 ```
