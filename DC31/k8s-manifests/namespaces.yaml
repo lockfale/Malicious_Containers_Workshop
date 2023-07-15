@@ -1,4 +1,20 @@
+---
 apiVersion: v1
 kind: Namespace
 metadata:
   name: pls-dont-hack-me
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: monitoring
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: tracee-system
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: alert-demo

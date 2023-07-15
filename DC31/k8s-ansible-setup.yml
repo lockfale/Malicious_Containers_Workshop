@@ -1,27 +1,161 @@
 ---
 - hosts: localhost
-  gather_facts: no
-  vars:
-    sha256check:
-      ok: "kubeectl:OK"
+  name: Setup Kubernetes cluster
+  gather_facts: false
   tasks:
-   - name: Add current user to Docker group
-     command: sudo usermod -aG docker $USER
-   - name: Download kubectl
-     command: curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
-   - name: Get file hash for kubectl
-     command: curl -LO "https://dl.k8s.io/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl.sha256"
-   - name: Compare hash values
-     shell: echo "$(<kubectl.sha256) kubectl" | sha256sum --check
-     register: command_output
-   - name: Verify everything okay
-     set_fact:
-       hash_check_success: "{{ command_output.stdout == sha256check['ok'] }}"
-   - name: 
-       debug: 
-         msg: "kubectl checks out okay"
-       when: hash_check_success   
-   - name: Create a namespace for privesc
-     command: kubectl apply -f k8s-manifests/namespaces.yaml
-   - name: Create a ClusterRole and ClusterRoleBinding
-     command: kubectl apply -f k8s-manifests/secrets-clusterrole.yaml
+    - name: Create namespaces
+      ansible.builtin.command: kubectl apply -f k8s-manifests/namespaces.yaml
+      register: kubectl_run
+      changed_when:
+        - "'created' in kubectl_run.stdout"
+
+    - name: Create ClusterRoles
+      ansible.builtin.command: kubectl apply -f k8s-manifests/clusterroles.yaml
+      register: kubectl_run
+      changed_when:
+        - "'created' in kubectl_run.stdout"
+
+    - name: Create Roles
+      ansible.builtin.command: kubectl apply -f k8s-manifests/roles.yaml
+      register: kubectl_run
+      changed_when:
+        - "'created' in kubectl_run.stdout"
+
+    - name: Create Service Accounts
+      ansible.builtin.command: kubectl apply -f k8s-manifests/serviceaccounts.yaml
+      register: kubectl_run
+      changed_when:
+        - "'created' in kubectl_run.stdout"
+
+    - name: Create ClusterRoleBindings
+      ansible.builtin.command: kubectl apply -f k8s-manifests/clusterrolebindings.yaml
+      register: kubectl_run
+      changed_when:
+        - "'created' in kubectl_run.stdout"
+
+    - name: Create RoleBindings
+      ansible.builtin.command: kubectl apply -f k8s-manifests/rolebindings.yaml
+      register: kubectl_run
+      changed_when:
+        - "'created' in kubectl_run.stdout"
+
+    # - name: Create ConfigMaps
+    #   ansible.builtin.command: kubectl apply -f k8s-manifests/configmaps.yaml
+    #   register: kubectl_run
+    #   changed_when:
+    #     - "'created' in kubectl_run.stdout"
+
+    - name: Create Deployments
+      ansible.builtin.command: kubectl apply -f k8s-manifests/deployments.yaml
+      register: kubectl_run
+      changed_when:
+        - "'created' in kubectl_run.stdout"
+
+    - name: Create Pods
+      ansible.builtin.command: kubectl apply -f k8s-manifests/pods.yaml
+      register: kubectl_run
+      changed_when:
+        - "'created' in kubectl_run.stdout"
+
+    - name: Create Services
+      ansible.builtin.command: kubectl apply -f k8s-manifests/services.yaml
+      register: kubectl_run
+      changed_when:
+        - "'created' in kubectl_run.stdout"
+
+    - name: Install promethus for kind clusters
+      ansible.builtin.command:
+        cmd: |
+          helm install kind-prometheus prometheus-community/kube-prometheus-stack
+          --namespace monitoring
+          --set prometheus.service.nodePort=30000
+          --set prometheus.service.type=NodePort
+          --set grafana.service.nodePort=31000
+          --set grafana.service.type=NodePort
+          --set alertmanager.service.nodePort=32000
+          --set alertmanager.service.type=NodePort
+          --set prometheus-node-exporter.service.nodePort=32001
+          --set prometheus-node-exporter.service.type=NodePort
+          --values helm-config/grafana-config.yaml
+      register: helm_install
+      changed_when:
+        - "'STATUS: deployed' in helm_install.stdout"
+
+    - name: Install promtail to grafana
+      ansible.builtin.command:
+        cmd: |
+          helm upgrade
+          --install promtail grafana/promtail
+          --values helm-config/promtail-config.yaml
+          --namespace monitoring
+      register: helm_install
+      changed_when:
+        - "'STATUS: deployed' in helm_install.stdout"
+
+    - name: Install loki
+      ansible.builtin.command:
+        cmd: |
+          helm upgrade
+          --install loki grafana/loki-distributed
+          --namespace monitoring
+      register: helm_install
+      changed_when:
+        - "'STATUS: deployed' in helm_install.stdout"
+
+    - name: Install tracee
+      ansible.builtin.command:
+        cmd: |
+          helm install tracee aqua/tracee
+          --namespace tracee-system
+          --set hostPID=true
+          --version 0.15.1
+      register: helm_install
+      changed_when:
+        - "'STATUS: deployed' in helm_install.stdout"
+
+    - name: Add secrets
+      ansible.builtin.command:
+        cmd: |
+          kubectl create -f k8s-manifests/secrets.yaml
+      register: kubectl_run
+      changed_when:
+        - "'created' in kubectl_run.stdout"
+
+    - name: Setup developer context for later
+      ansible.builtin.shell: |
+        set -o pipefail
+        SECRET_NAME="developer-user-token"
+        TOKEN=$(kubectl get secret ${SECRET_NAME} --namespace=pls-dont-hack-me -o jsonpath='{$.data.token}' | base64 -d | sed $'s/$/\\\n/g')
+        kubectl config set-credentials developer --token=${TOKEN}
+        kubectl config set-context developer@kind-lab --user=developer --cluster=kind-lab --namespace=pls-dont-hack-me
+      args:
+        executable: /usr/bin/bash
+      register: cmd_output
+      changed_when:
+        - "'created' in cmd_output.stdout"
+
+    # Not needed until ngrok ingress controller works
+    # - name: Get ngrok credentials
+    #   ansible.builtin.include_vars:
+    #     file: "{{ lookup('env', 'HOME') }}/.config/ngrok/ngrok.yml"
+    #     # variable should be accessed as api_key and authtoken
+
+    # - name: Install ngrok ingress controller
+    #   ansible.builtin.command:
+    #     cmd: |
+    #       helm install ngrok-ingress-controller
+    #       ngrok/kubernetes-ingress-controller
+    #       --namespace monitoring
+    #       --set credentials.apiKey={{ api_key }}
+    #       --set credentials.authtoken={{ authtoken }}
+    #   register: ngrok_ingress_install
+    #   changed_when:
+    #     - "'STATUS: deployed' in ngrok_ingress_install.stdout"
+
+    # - name: Create Ingress
+    #   ansible.builtin.command: kubectl apply -f k8s-manifests/ingress.yaml
+    #   environment:
+    #     NGROK_SUBDOMAIN: "{{ lookup('env', 'USER') }}-dc31.ngrok.io"
+    #   register: kubectl_run
+    #   changed_when:
+    #     - "'created' in kubectl_run.stdout"
