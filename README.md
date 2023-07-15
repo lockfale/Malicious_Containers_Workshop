@@ -1,4 +1,4 @@
-# DC31 Malicious_Containers_Workshop
+# DC31 Malicious Containers Workshop Redux
 
 This repository contains the slides and accompanying lab materials for the [Workshop to be delivered at DEFCON 31 - Creating and uncovering malicious containers Redux](https://forum.defcon.org/node/246020). 
 
