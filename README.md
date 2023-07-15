@@ -5,7 +5,7 @@ This repository contains the slides and accompanying lab materials for the [Work
 Much of this content will be hosted on the DC media server. If you are one of the humans attending the course, please also join the 
 Discord server that was provided to you in the information email from the conference. We will not post the link publically. 
 
-The repository also contains past versions of the course, such as the original [Workshop delivered at DEFCON 30 - Creating and Uncovering Malicious Containers](https://forum.defcon.org/node/241774) and interations delivered at [BSides Charleston 22.](https://bsideschs.ticketbud.com/ws-creating). As well as any versions to be delivered in the future as we continue to update and improve it or offer it at other events. 
+The repository also contains past versions of the course, such as the original [Workshop delivered at DEFCON 30 - Creating and Uncovering Malicious Containers](https://forum.defcon.org/node/241774) and interations delivered at [BSides Charleston 22.](https://bsideschs.ticketbud.com/ws-creating) and [ISSA Triad 2023 Security Summit](https://triadnc.issa.org/). As well as any versions to be delivered in the future as we continue to update and improve it or offer it at other events. 
 
 
 ## Presenters
