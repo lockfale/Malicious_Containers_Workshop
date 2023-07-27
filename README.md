@@ -7,11 +7,11 @@ Much of this content will be hosted on the DC media server as well. If you are o
 Discord server that was provided to you in the information email from the conference. We will not post the link publically. The Discord will be
 used to get assistance before and during the workshop.
 
-Use the [Lab Setup](Lab%20Setup.md) for instructions on setting up the lab environment you will use during the workshop.
+Use the [Lab Setup](DC31/Lab%20Setup.md) for instructions on setting up the lab environment you will use during the workshop.
 
-Use the [Lab Walk Thru](labs_walk_thru.md) as an accompanying guide and to easily copy/paste commands to your lab from the various exercises.
+Use the [Lab Walk Thru](DC31/labs_walk_thru.md) as an accompanying guide and to easily copy/paste commands to your lab from the various exercises.
 
-Use the [Cheat Sheet](cheatsheet.md) for trouble shooting any issues you might encounter or learning how to exit vi.
+Use the [Cheat Sheet](DC31/cheatsheet.md) for trouble shooting any issues you might encounter or learning how to exit vi.
 
 ## Past Workshops
 
