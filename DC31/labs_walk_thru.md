@@ -264,7 +264,7 @@ cat <hash>/json | jq
 sudo docker run -t --rm -v /var/run/docker.sock:/var/run/docker.sock:ro pegleg/whaler -sV=1.36 nginx:latest
 ```
 ```
-sudo docker run -t --rm -v /var/run/docker.sock:/var/run/docker.sock:ro pegleg/whaler -sV=1.36 wellsfargo102/upload
+sudo docker run -t --rm -v /var/run/docker.sock:/var/run/docker.sock:ro pegleg/whaler -sV=1.36 mkefi/dropboxservice
 ```
 
 ### Slide 42 - Watch out: Exposing Services
