@@ -234,7 +234,7 @@ ls /tmp/app-decompiled/
 ```
 
 ```
-less /tmp/app-decompiled/BOOT-INF/classes/com/wellsfargo/uploadexcel/entity/StockDetailsEntity.java
+less /tmp/app-decompiled/BOOT-INF/classes/application.yml
 ```
 
 ### Slide 36 - Manual Reversing (just another way of extracting files from an image)
