@@ -128,7 +128,7 @@ Sign up for a free ngrok account on https://ngrok.com, you can Oauth through the
 
 You'll likely get redirected to a Setup & Installation page under Getting Started once you're signed in.
 
-Run the command under "Connect your account" in the terminal on your VM
+Run the command under "Connect your account" in the terminal on your VM. You won't need to run the `unzip` command because we put it on with ansible already.
 ![image](https://github.com/lockfale/Malicious_Containers_Workshop/assets/32903188/637031ab-73d2-4d43-9535-84e543afd023)
 
 
