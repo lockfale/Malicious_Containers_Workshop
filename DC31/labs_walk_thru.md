@@ -362,8 +362,13 @@ docker build -t cmddemo .
 ```
 
 ```
-docker run cmddemo
+docker run --name demo -d cmddemo
 ```
+
+```
+docker logs demo --follow 2>$1
+```
+
 
 ### Slide 54 - Build and run your image (cont.)
 
@@ -381,7 +386,7 @@ docker ps
 ```
 Note name or id of running container and use it in command below
 ```
-docker stop [name or id of running cmddemo container]
+docker stop demo
 ```
 
 ```
@@ -612,7 +617,7 @@ kubectl get pod nginx -o wide --namespace lab-namespace
 ### Slide 120 - Lab Setup
 
 ```
-ansible k8s-ansible-setup.yml
+ansible-playbook k8s-ansible-setup.yaml
 ```
 
 
