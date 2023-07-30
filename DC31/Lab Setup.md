@@ -136,6 +136,8 @@ Example: `ngrok config add-authtoken <authtoken>`
 
 Ngrok will be used for some exercises, so having this step completed ahead of time will be useful.
 
+You can check if ngrok is working with `ngrok http 80`. 
+
 **8. Do not turn off the VM after setup whilst waiting for the workshop. Otherwise you'll lose all the above (ephemeral storage).** 
 
   
