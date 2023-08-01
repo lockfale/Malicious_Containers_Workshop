@@ -15,7 +15,7 @@ Use the [Cheat Sheet](DC31/cheatsheet.md) for trouble shooting any issues you mi
 
 ## Past Workshops
 
-The repository also contains past versions of the course, such as the original [Workshop delivered at DEFCON 30 - Creating and Uncovering Malicious Containers](https://forum.defcon.org/node/241774) and interations delivered at [BSides Charleston 22.](https://bsideschs.ticketbud.com/ws-creating) and [ISSA Triad 2023 Security Summit](https://triadnc.issa.org/). As well as any versions to be delivered in the future as we continue to update and improve it or offer it at other events. 
+The repository also contains past versions of the course, such as the original [Workshop delivered at DEFCON 30 - Creating and Uncovering Malicious Containers](https://forum.defcon.org/node/241774) and interations delivered at [BSides Charleston 22](https://bsideschs.ticketbud.com/ws-creating) and [ISSA Triad 2023 Security Summit](https://triadnc.issa.org/). As well as any versions to be delivered in the future as we continue to update and improve it or offer it at other events. 
 
 
 ## Presenters
