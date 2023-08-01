@@ -73,3 +73,12 @@ Map the escape key to another key combination
 i.e
 `:imap jj <ESC` 
 
+** Ngrok Oauth issues **
+
+Use Basic Authentication instead of OAuth
+```
+#Example of basic auth
+ngrok http $WORKER1:31000 --basic-auth="frank:password123"
+```
+
+Specify your own username and password with a colon between in the `<user>:<password>` format in the basic-auth flag above.

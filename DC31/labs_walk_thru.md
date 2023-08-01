@@ -1017,6 +1017,12 @@ Click through the warning message, login with your Google Account matching the e
 
 You now have access to your Grafana Dashboard from the internet
 
+>Note: If you're having issues using Google for OAuth, you can fall back to basic auth protocol and specify your own user/password.
+```
+#Example of basic auth
+ngrok http $WORKER1:31000 --basic-auth="user:password123"
+```
+
 Grafana Credentials
 
 Username:
