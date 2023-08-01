@@ -45,10 +45,6 @@ sudo pip install ansible
 ```
 
 ```
-export PATH=$PATH:/home/$USER/.local/bin
-```
-
-```
 curl -LO https://raw.githubusercontent.com/lockfale/Malicious_Containers_Workshop/dc31/DC31/lab-ansible-setup.yml
 ```
 
