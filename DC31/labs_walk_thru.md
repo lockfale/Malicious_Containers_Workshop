@@ -1043,6 +1043,22 @@ ngrok http $WORKER1:32000 --oauth=google --oauth-allow-email=<your.email>@gmail.
 
 ### Slide 157 - Tracee events in Grafana
 
+Navigate:
+Top right Hamburger menu &rarr; Explore
+
+Switch Prometheus in the top left to Loki
+
+On the left side you'll see an option for Builder or Code, select Code.
+
+Paste this query into the query bar and click Run Query
+```
+{namespace="tracee-system"} |= `matchedPolicies` != `sshd` | json | line_format "{{.log}}"
+```
+
+```
+{namespace="tracee-system"} |= `matchedPolicies` != `sshd` | json | line_format "{{.log}}" | hostName != "juice-shop-"
+```
+
 
 **Adding the Dashboard**
 
@@ -1053,7 +1069,7 @@ Select New &rarr; Import
 In another tab, open the link below and copy the json from there
 
 ```
-https://raw.githubusercontent.com/aquasecurity/tracee/main/deploy/grafana/tracee.json
+https://raw.githubusercontent.com/lockfale/Malicious_Containers_Workshop/dc31/DC31/grafana/tracee-dashboard.json
 ```
 
 Paste the json in the text box labeled 'Import via panel json'
