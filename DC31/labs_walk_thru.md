@@ -285,13 +285,15 @@ docker trust inspect nginx | jq
 
 ## Module 3: Offensive Docker Techniques
 
-### Slide 48 - Starting Tracee
+### ~~Slide 48 - Starting Tracee~~
+Skipping slide 48 content - its running automatically into grafana for you now. We will look in module 8!
 
-Start a new terminal window
+~~Start a new terminal window~~
 ```
 docker run --name tracee -d --rm --pid=host --cgroupns=host --privileged -v /etc/os-release:/etc/os-release-host:ro \
 -e LIBBPFGO_OSRELEASE_FILE=/etc/os-release-host aquasec/tracee:latest
 ```
+
 
 ```
 docker logs tracee --follow 2>$1 |grep MatchedPolicies
