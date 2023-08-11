@@ -60,14 +60,14 @@ or
 
 `kubectl config use-context kind-lab`
 
-** POSTING to requestbin.com isn't working  ** 
+**POSTING to requestbin.com isn't working** 
  
 Did you paste a pipedream link from your unique page, or a requestbin link? 
 use this one: 
 <img width="575" alt="image" src="https://user-images.githubusercontent.com/32903188/184508462-23c14724-231d-4391-b971-e78af5450573.png">
 
 
-** `ESC` Keymapping to escape vim in the google console web browser is not working ** 
+**`ESC` Keymapping to escape vim in the google console web browser is not working** 
 
 Map the escape key to another key combination 
 i.e
