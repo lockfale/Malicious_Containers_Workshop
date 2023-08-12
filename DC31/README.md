@@ -30,6 +30,8 @@ Use the [Cheat Sheet](cheatsheet.md) for trouble shooting any issues you might e
 ![aussinfosec](https://github.com/lockfale/Malicious_Containers_Workshop/assets/913856/8d97b0eb-7beb-43f1-ac21-e2198475e7e2)
 > @aussinfosec
 
+### TA: Jan Nunez
+> @theprobingteep
 
 ## Our lockpick/hacker(space) group
 
