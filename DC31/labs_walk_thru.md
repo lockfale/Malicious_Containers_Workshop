@@ -301,7 +301,7 @@ docker logs tracee --follow 2>&1 |grep MatchedPolicies
 
 ### Slide 49 - Create a Dockerfile
 
-Switch back to original window to run the following commands below.
+Switch back to original window to run the following commands below:
 
 ```
 cd ~ && mkdir imagetest && cd imagetest && vi Dockerfile
