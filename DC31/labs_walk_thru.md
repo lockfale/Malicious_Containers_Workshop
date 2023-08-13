@@ -288,16 +288,20 @@ docker trust inspect nginx | jq
 ### Slide 48 - Starting Tracee
 
 Start a new terminal window
+
+Run both of these commands in the new terminal window:
 ```
 docker run --name tracee -d --rm --pid=host --cgroupns=host --privileged -v /etc/os-release:/etc/os-release-host:ro \
 -e LIBBPFGO_OSRELEASE_FILE=/etc/os-release-host aquasec/tracee:latest
 ```
 
 ```
-docker logs tracee --follow 2>$1 |grep MatchedPolicies
+docker logs tracee --follow 2>&1 |grep MatchedPolicies
 ```
 
 ### Slide 49 - Create a Dockerfile
+
+Switch back to original window to run the following commands below.
 
 ```
 cd ~ && mkdir imagetest && cd imagetest && vi Dockerfile
@@ -366,7 +370,7 @@ docker run --name demo -d cmddemo
 ```
 
 ```
-docker logs demo --follow 2>$1
+docker logs demo --follow 2>&1
 ```
 
 
