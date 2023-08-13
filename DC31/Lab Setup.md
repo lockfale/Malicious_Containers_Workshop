@@ -124,13 +124,15 @@ Sign up for a free ngrok account on https://ngrok.com, you can Oauth through the
 
 You'll likely get redirected to a Setup & Installation page under Getting Started once you're signed in.
 
-Run the command under "Connect your account" in the terminal on your VM
+Run the command under "Connect your account" in the terminal on your VM. You won't need to run the `unzip` command because we put it on with ansible already.
 ![image](https://github.com/lockfale/Malicious_Containers_Workshop/assets/32903188/637031ab-73d2-4d43-9535-84e543afd023)
 
 
 Example: `ngrok config add-authtoken <authtoken>`
 
 Ngrok will be used for some exercises, so having this step completed ahead of time will be useful.
+
+You can check if ngrok is working with `ngrok http 80`. 
 
 **8. Do not turn off the VM after setup whilst waiting for the workshop. Otherwise you'll lose all the above (ephemeral storage).** 
 
