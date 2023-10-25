@@ -20,7 +20,7 @@ Use the [Cheat Sheet](cheatsheet.md) for trouble shooting any issues you might e
 <img width="242" alt="digish0" src="https://github.com/lockfale/Malicious_Containers_Workshop/assets/913856/05a0519d-e6e9-420c-8cc2-fa67b1737902">
 
 > @digish0\
-> https://digital-shokunin.ne
+> https://digital-shokunin.net
 
 ### Instructor: Adrian Wood 
 <img width="242" alt="threllfall" src="https://github.com/lockfale/Malicious_Containers_Workshop/assets/913856/46bd8379-00b9-4887-91cd-f3c6495a78c5">
@@ -30,4 +30,4 @@ Use the [Cheat Sheet](cheatsheet.md) for trouble shooting any issues you might e
 
 ## Our lockpick/hacker(space) group
 
-![falelogo](https://github.com/lockfale/Malicious_Containers_Workshop/assets/913856/4a836cf4-cc97-49ec-a4c8-ed739c83820e)
+<img alt="FALE logo" width="500" src="https://github.com/lockfale/Malicious_Containers_Workshop/assets/913856/4a836cf4-cc97-49ec-a4c8-ed739c83820e">
