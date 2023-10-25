@@ -1,0 +1,17 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: juice-shop-service
+  namespace: pls-dont-hack-me
+  annotations:
+    prometheus.io/scrape: 'true'
+    prometheus.io/port: '9090'
+spec:
+  selector:
+    app: juices-shop
+  type: NodePort
+  ports:
+  - port: 8080
+    nodePort: 30030
+    targetPort: 3000

