@@ -20,23 +20,13 @@ Use the [Cheat Sheet](cheatsheet.md) for trouble shooting any issues you might e
 <img width="242" alt="digish0" src="https://github.com/lockfale/Malicious_Containers_Workshop/assets/913856/05a0519d-e6e9-420c-8cc2-fa67b1737902">
 
 > @digish0\
-> https://digital-shokunin.net
+> https://digital-shokunin.ne
 
 ### Instructor: Adrian Wood 
 <img width="242" alt="threllfall" src="https://github.com/lockfale/Malicious_Containers_Workshop/assets/913856/46bd8379-00b9-4887-91cd-f3c6495a78c5">
 
 > @whitehacksec\
-> https://keybase.io/threlfall 
-
-### TA: Griffin Francis
-
-![aussinfosec](https://github.com/lockfale/Malicious_Containers_Workshop/assets/913856/8d97b0eb-7beb-43f1-ac21-e2198475e7e2)
-> @aussinfosec
-
-### TA: Jan Nunez
-<img width="242" alt="theprobingteep" src="https://github.com/lockfale/Malicious_Containers_Workshop/assets/913856/4ebe9663-26bd-4bd9-b973-c2097804a77f">
-
-> @theprobingteep
+> https://5stars217.github.io
 
 ## Our lockpick/hacker(space) group
 
