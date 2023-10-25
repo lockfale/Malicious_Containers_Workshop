@@ -18,11 +18,13 @@ Use the [Cheat Sheet](cheatsheet.md) for trouble shooting any issues you might e
 
 ### Instructor: David Mitchell
 <img width="242" alt="digish0" src="https://github.com/lockfale/Malicious_Containers_Workshop/assets/913856/05a0519d-e6e9-420c-8cc2-fa67b1737902">
+
 > @digish0\
 > https://digital-shokunin.net
 
 ### Instructor: Adrian Wood 
 <img width="242" alt="threllfall" src="https://github.com/lockfale/Malicious_Containers_Workshop/assets/913856/46bd8379-00b9-4887-91cd-f3c6495a78c5">
+
 > @whitehacksec\
 > https://keybase.io/threlfall 
 
