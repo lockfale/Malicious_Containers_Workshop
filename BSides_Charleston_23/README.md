@@ -17,16 +17,17 @@ Use the [Cheat Sheet](cheatsheet.md) for trouble shooting any issues you might e
 ## Presenters
 
 ### Instructor: David Mitchell
-![lego-profile](https://github.com/lockfale/Malicious_Containers_Workshop/assets/913856/f3e64df8-215f-466a-b9cb-a3933e807b60)
+![digish0](https://github.com/lockfale/Malicious_Containers_Workshop/assets/913856/05a0519d-e6e9-420c-8cc2-fa67b1737902)
 > @digish0\
 > https://digital-shokunin.net
 
 ### Instructor: Adrian Wood 
-![threlfall](https://github.com/lockfale/Malicious_Containers_Workshop/assets/913856/901c59ef-9e83-49d1-b0df-d89c6002338d)
+![threllfall](https://github.com/lockfale/Malicious_Containers_Workshop/assets/913856/46bd8379-00b9-4887-91cd-f3c6495a78c5)
 > @whitehacksec\
 > https://keybase.io/threlfall 
 
 ### TA: Griffin Francis
+
 ![aussinfosec](https://github.com/lockfale/Malicious_Containers_Workshop/assets/913856/8d97b0eb-7beb-43f1-ac21-e2198475e7e2)
 > @aussinfosec
 
