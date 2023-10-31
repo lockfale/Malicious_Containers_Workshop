@@ -145,7 +145,9 @@ If you have an empty .kubeconfig file - your session was probably duplicated and
 
 **Can I just use my own local VM?**
 
-We disencourage the local use of VMs for several reasons, one we don't have time troubleshoot everyone's individual setup, hypervisor, or have to care about what platform their laptop utilizes. However, the biggest reason is the bandwidth usage downloading images during the exercises would be untenable over the local wifi, especially when the bandwidth is shared across multiple students in our workshop and others. What takes less than 30 seconds in a datacenter may take 10-15 minutes downloading to a local machine and depending on QoS may cause problems for other students. Most wifi can easily support multiple SSH/web sessions to remote machines however. 
+We disencourage the local use of VMs for several reasons, one is platform agnosticism. We want everyone to be able to participate whether they use Windows, OS X, Linux, x86, ARM, etc.  We don't have time troubleshoot everyone's individual setup, hypervisor, or have to care about what hardware/OS they bring beyond it can run a modern web browser. 
+
+However, the biggest reason is the bandwidth usage downloading images during the exercises would be untenable over the local wifi, especially when the bandwidth is shared across multiple students in our workshop and others. What takes less than 30 seconds in a datacenter may take 10-15 minutes downloading to a local machine and depending on QoS may cause problems for other students. Most wifi can easily support multiple SSH/web sessions to remote machines however. 
 
 After the class, if you want to shutdown the GCP instances and run the lab setup on a local VM for home/personal use, you're more than welcome to.
 
