@@ -3,6 +3,8 @@
 
 Welcome to the malicious Kubernetes training, the following destructions will help you set up a lab for the BSides Charleston Workshop. The K8s lab component is predominantly built w/ the assistance of `kind` - a tool for rapid prototyping in k8s, and `ansible` for orcestration. It’s not suitable for production usage,but it builds fast and reliably given our time constraints. It’ll give us an environment that will teach us the fundamental components. 
 
+If you have questions about running the lab on something other than GCP, please see the [FAQ](#FAQ) at the end of the setup instructions.
+
 **Time:** 5-10 mins including spinning dials
 
 **1. Create a new VM instance.** Select a e2-standard-2 for this session, so that you can run a large number of nodes and pods. 
