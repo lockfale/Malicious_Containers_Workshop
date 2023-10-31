@@ -3,9 +3,9 @@
 
 Welcome to the malicious Kubernetes training, the following destructions will help you set up a lab for the BSides Charleston Workshop. The K8s lab component is predominantly built w/ the assistance of `kind` - a tool for rapid prototyping in k8s, and `ansible` for orcestration. It’s not suitable for production usage,but it builds fast and reliably given our time constraints. It’ll give us an environment that will teach us the fundamental components. 
 
+If you have questions about running the lab on something other than GCP, please see the [FAQ](#FAQ) at the end of the setup instructions.
 
 **Time:** 5-10 mins including spinning dials
-
 
 **1. Create a new VM instance.** Select a e2-standard-2 for this session, so that you can run a large number of nodes and pods. 
 This should come out to around the following cost per month: $51.92, or $0.07 cents an hour from your free credits you get by registering a new email address. 
@@ -136,7 +136,6 @@ You can check if ngrok is working with `ngrok http 80`.
 
 **8. Do not turn off the VM after setup whilst waiting for the workshop. Otherwise you'll lose all the above (ephemeral storage).** 
 
-  
    
 
 **Troubleshooting note:**
@@ -144,6 +143,20 @@ You can check if ngrok is working with `ngrok http 80`.
 If you have an empty .kubeconfig file - your session was probably duplicated and not restarted after you installed kind. - make sure to exit your session and start a new one before continuing after the kind install.
 
 
+## FAQ
 
+**Can I just use my own local VM?**
+
+We disencourage the local use of VMs for several reasons, one is platform agnosticism. We want everyone to be able to participate whether they use Windows, OS X, Linux, x86, ARM, etc.  We don't have time to troubleshoot everyone's individual setup, hypervisor, or have to care about what hardware/OS they bring beyond it can run a modern web browser. 
+
+However, the biggest reason is the bandwidth usage downloading images during the exercises would be untenable over the local wifi, especially when the bandwidth is shared across multiple students in our workshop and others. What takes less than 30 seconds in a datacenter may take 10-15 minutes downloading to a local machine and depending on QoS may cause problems for other students. Most wifi can easily support multiple SSH/web sessions to remote machines however. 
+
+After the workshop, if you want to shutdown/delete the GCP instances and run the lab setup on a local VM for home/personal use, you're more than welcome to.
+
+**Can I just use my own favorite cloud provider?**
+
+If you have a particular dislike for GCP or getting the free credit is an issue for you and you want to use your own cloud provider of choice for some reason, do so at your own risk. While the lab setup *should* work on any VM running Ubuntu 20.04-22.04, we have not tested this extensively and don't think its particularly worth the trouble. 
+
+As with the local VM, if you want to migrate the lab to another provider after the workshop, you're more than welcome to, but we feel during the workshop its easier if everyone sticks to the same setup to eliminate unexpected behavior.
 
 
