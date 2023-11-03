@@ -7,8 +7,8 @@ metadata:
 spec:
   containers:
   - name: malicious-container
-    image: ubuntu:22.04
-    command: ["/bin/dash"]
+    image: nixery.dev/shell/openssl/strace
+    command: ["/bin/bash"]
     args:
     - "-c"
     - |
