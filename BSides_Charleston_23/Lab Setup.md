@@ -147,7 +147,7 @@ If you have an empty .kubeconfig file - your session was probably duplicated and
 
 **Can I just use my own local VM?**
 
-We disencourage the local use of VMs for several reasons, one is platform agnosticism. We want everyone to be able to participate whether they use Windows, OS X, Linux, x86, ARM, etc.  We don't have time to troubleshoot everyone's individual setup, hypervisor, or have to care about what hardware/OS they bring beyond it can run a modern web browser. 
+We discourage the use of local VMs for several reasons, one is platform agnosticism. We want everyone to be able to participate whether they use Windows, OS X, Linux, x86, ARM, etc.  We don't have time to troubleshoot everyone's individual setup, hypervisor, or have to care about what hardware/OS they bring beyond it can run a modern web browser. 
 
 However, the biggest reason is the bandwidth usage downloading images during the exercises would be untenable over the local wifi, especially when the bandwidth is shared across multiple students in our workshop and others. What takes less than 30 seconds in a datacenter may take 10-15 minutes downloading to a local machine and depending on QoS may cause problems for other students. Most wifi can easily support multiple SSH/web sessions to remote machines however. 
 
@@ -158,5 +158,3 @@ After the workshop, if you want to shutdown/delete the GCP instances and run the
 If you have a particular dislike for GCP or getting the free credit is an issue for you and you want to use your own cloud provider of choice for some reason, do so at your own risk. While the lab setup *should* work on any VM running Ubuntu 20.04-22.04, we have not tested this extensively and don't think its particularly worth the trouble. 
 
 As with the local VM, if you want to migrate the lab to another provider after the workshop, you're more than welcome to, but we feel during the workshop its easier if everyone sticks to the same setup to eliminate unexpected behavior.
-
-
