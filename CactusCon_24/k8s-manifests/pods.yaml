@@ -1,0 +1,17 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: tracee-tester
+  labels:
+    name: tracee-tester
+  namespace: alert-demo
+spec:
+  containers:
+  - name: tracee-tester
+    image: tracee-tester
+    args: ["TRC-107", "TRC-1018", "TRC-1016"]
+    resources:
+      limits:
+        memory: "128Mi"
+        cpu: "250m"
