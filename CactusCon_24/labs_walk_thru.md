@@ -1321,6 +1321,21 @@ Clean up
 docker stop netwebserver
 ```
 
+### Slide XXX - Incident response exercise
+
+```
+openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -sha256 -days 3650 -nodes -subj "/C=XX/ST=AZ/L=Mesa/O=CactusCon/OU=Malicious Kubernetes/CN=localhost"
+```
+
+```
+python scripts/reverse_shell_handler.py
+```
+
+In another window/terminal, run:
+```
+kubectl apply -f k8s-manifests/attacker-pod.yaml
+```
+
 ### Slide XXX - Create side-car pod, test nginx, and remove pod (run in conjunction with babby's first pod
 
 ```

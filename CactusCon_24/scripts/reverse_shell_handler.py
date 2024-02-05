@@ -38,7 +38,7 @@ class SSLProtocol(Protocol):
     def dataReceived(self, data):
         print('Received:', data.decode())
         # Wait for a connection a prompt is received from the client
-        if data.decode() == '$ ':
+        if data.decode() == '$ ' or data.decode().endswith('$ '):
             # If there are no more enumeration commands, exit
             if len(self.enum_commands) == 0:
                 self.send_command('exit\n')
