@@ -5,7 +5,7 @@ This repository contains the slides and accompanying lab materials for the BSide
 ![Workshop Marquee](image.png)
 
 ## Instructions
-If you have not already, please register for the workshop at [BSides Charleston](https://bsidescharleston.org/). The workshop will be held on Friday, November 3rd, 2024 from 5:00 PM - 9:00 PM EST. The workshop will be held on the Colleg of Charleston campus at the Beatty Center. Also, be sure to check out the other great workshops and talks at BSides Charleston the following day.
+If you have not already, please register for the workshop at [BSides Charleston](https://bsidescharleston.org/). The workshop will be held on Friday, November 3rd, 2023 from 5:00 PM - 9:00 PM EST. The workshop will be held on the College of Charleston campus at the Beatty Center. Also, be sure to check out the other great workshops and talks at BSides Charleston the following day.
 
 If you have any questions, join the [BSides Charleston Slack](https://bsidescharleston.herokuapp.com/) and ask in the dedicated workshop channel. You can also ping direct message the presenters on Slack.
 
