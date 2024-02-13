@@ -1,6 +1,6 @@
-# CactusCon - Malicious Kubernetes Workshop
+# CactusCon 24 - Malicious Kubernetes Workshop
 
-This repository contains the slides and accompanying lab materials for the BSides Charleston Workshop - Malicious Kubernetes. This workshop is an introduction to Kubernetes and container security. We will cover the basics of Kubernetes, how to deploy a cluster, and how to deploy malicious containers to the cluster. We will also cover how to detect and respond to malicious containers in a cluster. The workshop content is an update of the [Malicious Containers Workshop](https://forum.defcon.org/node/246020) presented at DEF CON 31.
+This repository contains the slides and accompanying lab materials for the CactusCon Workshop - Malicious Kubernetes. This workshop is an introduction to Kubernetes and container security. We will cover the basics of Kubernetes, how to deploy a cluster, and how to deploy malicious containers to the cluster. We will also cover how to detect and respond to malicious containers in a cluster. The workshop content is an update of the [Malicious Containers Workshop](https://forum.defcon.org/node/246020) presented at DEF CON 31.
 
 ![Workshop Marquee](image.png)
 
