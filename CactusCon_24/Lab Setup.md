@@ -45,7 +45,7 @@ sudo pip install ansible
 ```
 
 ```
-curl -LO https://raw.githubusercontent.com/lockfale/Malicious_Containers_Workshop/main/BSides_Charleston_23/lab-ansible-setup.yml
+curl -LO https://raw.githubusercontent.com/lockfale/Malicious_Containers_Workshop/main/CactusCon_24/lab-ansible-setup.yml
 ```
 
 ```
