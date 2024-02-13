@@ -55,13 +55,15 @@
 
     - name: Download kubectl
       ansible.builtin.uri:
-        url: "https://dl.k8s.io/release/{{ kubectl_version.content }}/bin/linux/amd64/kubectl"
+        # url: "https://dl.k8s.io/release/{{ kubectl_version.content }}/bin/linux/amd64/kubectl"
+        url: "https://dl.k8s.io/release/1.27.3/bin/linux/amd64/kubectl"
         dest: "{{ download.path }}/kubectl"
       register: kubectl
 
     - name: Get file hash for kubectl
       ansible.builtin.uri:
-        url: "https://dl.k8s.io/{{ kubectl_version.content }}/bin/linux/amd64/kubectl.sha256"
+        # url: "https://dl.k8s.io/{{ kubectl_version.content }}/bin/linux/amd64/kubectl.sha256"
+        url: "https://dl.k8s.io/1.27.3/bin/linux/amd64/kubectl.sha256"
         return_content: true
       register: kubectl_sha256
 
