@@ -102,17 +102,6 @@
       changed_when:
         - "'STATUS: deployed' in helm_install.stdout"
 
-    - name: Install tracee
-      ansible.builtin.command:
-        cmd: |
-          helm install tracee aqua/tracee
-          --namespace tracee-system
-          --set hostPID=true
-          --version 0.15.1
-      register: helm_install
-      changed_when:
-        - "'STATUS: deployed' in helm_install.stdout"
-
     - name: Add secrets
       ansible.builtin.command:
         cmd: |
@@ -132,7 +121,23 @@
         executable: /usr/bin/bash
       register: cmd_output
       changed_when:
-        - "'created' in cmd_output.stdout"
+        - "'created' in cmd_output.stdout"        
+
+    - name: Install tracee
+      ansible.builtin.command:
+        cmd: |
+          helm install tracee aqua/tracee
+          --namespace tracee-system
+          --set hostPID=true
+          --version 0.19.0
+          --set nodeSelector.role=control-plane
+      register: helm_install
+      changed_when:
+        - "'STATUS: deployed' in helm_install.stdout"
+
+    # - name: Pause 90 seconds
+    #   ansible.builtin.pause:
+    #     seconds: 90
 
     # Not needed until ngrok ingress controller works
     # - name: Get ngrok credentials
