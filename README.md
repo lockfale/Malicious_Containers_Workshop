@@ -17,7 +17,7 @@ The repository also contains past versions of the course, such as the original [
 
 ### Instructor: Adrian Wood 
 ![threlfall](https://github.com/lockfale/Malicious_Containers_Workshop/assets/913856/901c59ef-9e83-49d1-b0df-d89c6002338d)
-> <a target="_blank" href="https://twitter.com/whitehatsec"><img src="https://img.shields.io/twitter/follow/whitehacksec"></a>\
+> <a target="_blank" href="https://twitter.com/WHITEHACKSEC"><img src="https://img.shields.io/twitter/follow/WhiteHackSec"></a>\
 > https://keybase.io/threlfall 
 
 
