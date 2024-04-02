@@ -23,4 +23,4 @@ The repository also contains past versions of the course, such as the original [
 
 ## Our lockpick/hacker(space) group
 
-![falelogo](https://github.com/lockfale/Malicious_Containers_Workshop/assets/913856/4a836cf4-cc97-49ec-a4c8-ed739c83820e)
+[![falelogo](https://github.com/lockfale/Malicious_Containers_Workshop/assets/913856/4a836cf4-cc97-49ec-a4c8-ed739c83820e)](https://github.com/lockFALE/)
