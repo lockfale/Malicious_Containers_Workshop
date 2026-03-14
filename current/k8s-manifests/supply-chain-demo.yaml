@@ -1,0 +1,48 @@
+---
+# Unsigned image deployment - for demonstrating admission controller enforcement
+apiVersion: v1
+kind: Pod
+metadata:
+  name: unsigned-app
+  namespace: pls-dont-hack-me
+  labels:
+    app: unsigned-app
+    demo: supply-chain
+spec:
+  containers:
+  - name: unsigned-app
+    image: ubuntu:22.04
+    command: ["/bin/sh", "-c", "--"]
+    args: ["echo 'I am an unsigned image'; while true; do sleep 30; done;"]
+    resources:
+      requests:
+        memory: "64Mi"
+        cpu: "250m"
+      limits:
+        memory: "128Mi"
+        cpu: "500m"
+---
+# Trojanized image analysis target - a known-vulnerable image for scanning demos
+apiVersion: v1
+kind: Pod
+metadata:
+  name: vuln-scan-target
+  namespace: pls-dont-hack-me
+  labels:
+    app: vuln-scan-target
+    demo: supply-chain
+spec:
+  containers:
+  - name: vuln-target
+    image: vulnerables/web-dvwa:latest
+    resources:
+      requests:
+        memory: "128Mi"
+        cpu: "250m"
+      limits:
+        memory: "256Mi"
+        cpu: "500m"
+    ports:
+    - containerPort: 80
+    command: ["/bin/sh", "-c", "--"]
+    args: ["while true; do sleep 30; done;"]

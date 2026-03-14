@@ -1,0 +1,26 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: read-secrets-clusterrolebinding
+subjects:
+- kind: ServiceAccount
+  name: read-secrets 
+  namespace: pls-dont-hack-me
+roleRef:
+  kind: ClusterRole
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: security-admin-clusterrolebinding
+subjects:
+- kind: ServiceAccount
+  name: security-svc 
+  namespace: tracee-system
+roleRef:
+  kind: ClusterRole
+  name: security-admin-role
+  apiGroup: rbac.authorization.k8s.io

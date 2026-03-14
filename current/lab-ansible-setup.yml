@@ -1,0 +1,387 @@
+---
+- name: Setup localhost
+  hosts: localhost
+  gather_facts: false
+  vars:
+    kubectl_ver: "v1.31.4"
+    helm_ver: "v3.16.4"
+    kind_ver: "v0.27.0"
+    cosign_ver: "v2.4.1"
+    crane_ver: "v0.20.2"
+    syft_ver: "1.18.1"
+    grype_ver: "0.85.0"
+  tasks:
+    - name: Install Docker and other dependencies
+      ansible.builtin.apt:
+        pkg:
+          - docker.io
+          - etcd-client
+          - jq
+          - unzip
+          - python3-pip
+          - python3-venv
+        update_cache: true
+      become: true
+
+    - name: Install Python packages for reverse shell handler
+      ansible.builtin.pip:
+        name:
+          - twisted==24.10.0
+          - pyopenssl==24.3.0
+          - service_identity==24.2.0
+        state: present
+
+    - name: Add current user to Docker group
+      ansible.builtin.user:
+        name: "{{ lookup('env', 'USER') }}"
+        groups: docker
+        append: true
+      become: true
+
+    - name: Create a directory for downloads
+      ansible.builtin.file:
+        path: "/tmp/lab-setup"
+        state: directory
+        mode: '0755'
+      register: download
+
+    # --- ngrok ---
+    - name: Download ngrok
+      ansible.builtin.uri:
+        url: https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-v3-stable-linux-amd64.tgz
+        dest: "{{ download.path }}/ngrok.tgz"
+      register: ngrok
+
+    - name: Extract ngrok
+      ansible.builtin.unarchive:
+        src: "{{ ngrok.path }}"
+        dest: "/usr/local/bin/"
+      become: true
+
+    # --- kubectl ---
+    - name: Download kubectl {{ kubectl_ver }}
+      ansible.builtin.uri:
+        url: "https://dl.k8s.io/release/{{ kubectl_ver }}/bin/linux/amd64/kubectl"
+        dest: "{{ download.path }}/kubectl"
+      register: kubectl
+
+    - name: Get file hash for kubectl
+      ansible.builtin.uri:
+        url: "https://dl.k8s.io/{{ kubectl_ver }}/bin/linux/amd64/kubectl.sha256"
+        return_content: true
+      register: kubectl_sha256
+
+    - name: Verify kubectl checksum
+      ansible.builtin.shell: |
+        set -o pipefail
+        echo "{{ kubectl_sha256.content | trim }} {{ kubectl.path }}" | sha256sum --check
+      args:
+        executable: /usr/bin/bash
+      register: cmd_output
+      failed_when:
+        - "'OK' not in cmd_output.stdout"
+      changed_when:
+        - "'OK' in cmd_output.stdout"
+
+    - name: Show download result
+      ansible.builtin.debug:
+        msg: "Download of {{ cmd_output.stdout }}"
+
+    - name: Copy kubectl to final location and set permissions
+      ansible.builtin.copy:
+        src: "{{ kubectl.path }}"
+        dest: "/usr/local/bin/kubectl"
+        owner: root
+        group: root
+        mode: "+x"
+      become: true
+
+    - name: Check if kubectl is installed
+      ansible.builtin.command: kubectl version --output=yaml
+      register: client
+      failed_when: client.rc > 1
+      changed_when:
+        - "'clientVersion' in client.stdout"
+
+    - name: Show kubectl client version
+      ansible.builtin.debug:
+        msg: "{{ client.stdout_lines }}"
+
+    # --- Helm ---
+    - name: Download helm {{ helm_ver }}
+      ansible.builtin.uri:
+        url: "https://get.helm.sh/helm-{{ helm_ver }}-linux-amd64.tar.gz"
+        dest: "{{ download.path }}/helm.tar.gz"
+      register: helm
+
+    - name: Get file hash for helm
+      ansible.builtin.uri:
+        url: "https://get.helm.sh/helm-{{ helm_ver }}-linux-amd64.tar.gz.sha256"
+        return_content: true
+      register: helm_sha256
+
+    - name: Verify helm checksum
+      ansible.builtin.shell: |
+        set -o pipefail
+        echo "{{ helm_sha256.content | trim }} {{ helm.path }}" | sha256sum --check
+      args:
+        executable: /usr/bin/bash
+      register: cmd_output
+      failed_when:
+        - "'OK' not in cmd_output.stdout"
+      changed_when:
+        - "'OK' in cmd_output.stdout"
+
+    - name: Extract helm
+      ansible.builtin.unarchive:
+        src: "{{ helm.path }}"
+        dest: "{{ download.path }}"
+
+    - name: Install helm
+      ansible.builtin.copy:
+        src: "{{ download.path }}/linux-amd64/helm"
+        dest: "/usr/local/bin/helm"
+        owner: root
+        group: root
+        mode: "+x"
+      become: true
+
+    # --- Helm repos (removed deprecated charts.helm.sh/stable) ---
+    - name: Add prometheus community helm repo
+      ansible.builtin.command: helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+      register: helm_repo
+      changed_when: "'added' in helm_repo.stdout"
+
+    - name: Add Grafana helm charts repo
+      ansible.builtin.command: helm repo add grafana https://grafana.github.io/helm-charts
+      register: helm_repo
+      changed_when: "'added' in helm_repo.stdout"
+
+    - name: Add Tracee helm charts repo
+      ansible.builtin.command: helm repo add aqua https://aquasecurity.github.io/helm-charts/
+      register: helm_repo
+      changed_when: "'added' in helm_repo.stdout"
+
+    - name: Add Falco helm charts repo
+      ansible.builtin.command: helm repo add falcosecurity https://falcosecurity.github.io/charts
+      register: helm_repo
+      changed_when: "'added' in helm_repo.stdout"
+
+    - name: Add Cilium (Tetragon) helm charts repo
+      ansible.builtin.command: helm repo add cilium https://helm.cilium.io/
+      register: helm_repo
+      changed_when: "'added' in helm_repo.stdout"
+
+    - name: Do helm repo update
+      ansible.builtin.command: helm repo update
+      register: helm_repo
+      changed_when: "'Update Complete' in helm_repo.stdout"
+
+    # --- kind ---
+    - name: Download kind {{ kind_ver }}
+      ansible.builtin.uri:
+        url: "https://kind.sigs.k8s.io/dl/{{ kind_ver }}/kind-linux-amd64"
+        dest: "{{ download.path }}/kind"
+      register: kind
+
+    - name: Copy kind to final location and set permissions
+      ansible.builtin.copy:
+        src: "{{ kind.path }}"
+        dest: "/usr/local/bin/kind"
+        owner: root
+        group: root
+        mode: "+x"
+      become: true
+
+    - name: Create kind autocomplete
+      ansible.builtin.shell: |
+        kind completion bash > {{ lookup('env', 'HOME') }}/.kind_completion
+        echo "source {{ lookup('env', 'HOME') }}/.kind_completion" >> {{ lookup('env', 'HOME') }}/.bashrc
+      args:
+        creates: "{{ lookup('env', 'HOME') }}/.kind_completion"
+
+    # --- cosign (Sigstore) ---
+    - name: Download cosign {{ cosign_ver }}
+      ansible.builtin.uri:
+        url: "https://github.com/sigstore/cosign/releases/download/{{ cosign_ver }}/cosign-linux-amd64"
+        dest: "{{ download.path }}/cosign"
+      register: cosign
+
+    - name: Install cosign
+      ansible.builtin.copy:
+        src: "{{ cosign.path }}"
+        dest: "/usr/local/bin/cosign"
+        owner: root
+        group: root
+        mode: "+x"
+      become: true
+
+    # --- crane (go-containerregistry) ---
+    - name: Download crane {{ crane_ver }}
+      ansible.builtin.uri:
+        url: "https://github.com/google/go-containerregistry/releases/download/{{ crane_ver }}/go-containerregistry_Linux_x86_64.tar.gz"
+        dest: "{{ download.path }}/crane.tar.gz"
+      register: crane_download
+
+    - name: Extract crane
+      ansible.builtin.unarchive:
+        src: "{{ crane_download.path }}"
+        dest: "{{ download.path }}"
+
+    - name: Install crane
+      ansible.builtin.copy:
+        src: "{{ download.path }}/crane"
+        dest: "/usr/local/bin/crane"
+        owner: root
+        group: root
+        mode: "+x"
+      become: true
+
+    # --- syft (SBOM generator) ---
+    - name: Install syft via install script
+      ansible.builtin.shell: |
+        curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin v{{ syft_ver }}
+      args:
+        creates: /usr/local/bin/syft
+      become: true
+
+    # --- grype (vulnerability scanner) ---
+    - name: Install grype via install script
+      ansible.builtin.shell: |
+        curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b /usr/local/bin v{{ grype_ver }}
+      args:
+        creates: /usr/local/bin/grype
+      become: true
+
+    # --- Download workshop files from repo ---
+    - name: Download kind lab configuration
+      ansible.builtin.uri:
+        url: https://raw.githubusercontent.com/lockfale/Malicious_Containers_Workshop/main/current/kind-lab-config.yaml
+        dest: "{{ playbook_dir }}/kind-lab-config.yaml"
+
+    - name: Download k8s cluster ansible playbook
+      ansible.builtin.uri:
+        url: https://raw.githubusercontent.com/lockfale/Malicious_Containers_Workshop/main/current/k8s-ansible-setup.yml
+        dest: "{{ playbook_dir }}/k8s-ansible-setup.yaml"
+
+    - name: Create k8s-manifest directory
+      ansible.builtin.file:
+        path: "{{ playbook_dir }}/k8s-manifests"
+        state: directory
+        mode: '0750'
+
+    - name: Download k8s clusterroles manifest
+      ansible.builtin.uri:
+        url: https://raw.githubusercontent.com/lockfale/Malicious_Containers_Workshop/main/current/k8s-manifests/clusterroles.yaml
+        dest: "{{ playbook_dir }}/k8s-manifests/clusterroles.yaml"
+
+    - name: Download k8s clusterrolebindings manifest
+      ansible.builtin.uri:
+        url: https://raw.githubusercontent.com/lockfale/Malicious_Containers_Workshop/main/current/k8s-manifests/clusterrolebindings.yaml
+        dest: "{{ playbook_dir }}/k8s-manifests/clusterrolebindings.yaml"
+
+    - name: Download k8s service accounts manifest
+      ansible.builtin.uri:
+        url: https://raw.githubusercontent.com/lockfale/Malicious_Containers_Workshop/main/current/k8s-manifests/serviceaccounts.yaml
+        dest: "{{ playbook_dir }}/k8s-manifests/serviceaccounts.yaml"
+
+    - name: Download k8s namespace manifest
+      ansible.builtin.uri:
+        url: https://raw.githubusercontent.com/lockfale/Malicious_Containers_Workshop/main/current/k8s-manifests/namespaces.yaml
+        dest: "{{ playbook_dir }}/k8s-manifests/namespaces.yaml"
+
+    - name: Download k8s deployments manifest
+      ansible.builtin.uri:
+        url: https://raw.githubusercontent.com/lockfale/Malicious_Containers_Workshop/main/current/k8s-manifests/deployments.yaml
+        dest: "{{ playbook_dir }}/k8s-manifests/deployments.yaml"
+
+    - name: Download k8s pods manifest
+      ansible.builtin.uri:
+        url: https://raw.githubusercontent.com/lockfale/Malicious_Containers_Workshop/main/current/k8s-manifests/pods.yaml
+        dest: "{{ playbook_dir }}/k8s-manifests/pods.yaml"
+
+    - name: Download k8s services manifest
+      ansible.builtin.uri:
+        url: https://raw.githubusercontent.com/lockfale/Malicious_Containers_Workshop/main/current/k8s-manifests/services.yaml
+        dest: "{{ playbook_dir }}/k8s-manifests/services.yaml"
+
+    - name: Download k8s roles manifest
+      ansible.builtin.uri:
+        url: https://raw.githubusercontent.com/lockfale/Malicious_Containers_Workshop/main/current/k8s-manifests/roles.yaml
+        dest: "{{ playbook_dir }}/k8s-manifests/roles.yaml"
+
+    - name: Download k8s rolebindings manifest
+      ansible.builtin.uri:
+        url: https://raw.githubusercontent.com/lockfale/Malicious_Containers_Workshop/main/current/k8s-manifests/rolebindings.yaml
+        dest: "{{ playbook_dir }}/k8s-manifests/rolebindings.yaml"
+
+    - name: Download k8s secrets manifest
+      ansible.builtin.uri:
+        url: https://raw.githubusercontent.com/lockfale/Malicious_Containers_Workshop/main/current/k8s-manifests/secrets.yaml
+        dest: "{{ playbook_dir }}/k8s-manifests/secrets.yaml"
+
+    - name: Download k8s evilpod manifest
+      ansible.builtin.uri:
+        url: https://raw.githubusercontent.com/lockfale/Malicious_Containers_Workshop/main/current/k8s-manifests/evilpod.yaml
+        dest: "{{ playbook_dir }}/k8s-manifests/evilpod.yaml"
+
+    - name: Download k8s attacker-pod manifest
+      ansible.builtin.uri:
+        url: https://raw.githubusercontent.com/lockfale/Malicious_Containers_Workshop/main/current/k8s-manifests/attacker-pod.yaml
+        dest: "{{ playbook_dir }}/k8s-manifests/attacker-pod.yaml"
+
+    - name: Download k8s nothingallowedpod manifest
+      ansible.builtin.uri:
+        url: https://raw.githubusercontent.com/lockfale/Malicious_Containers_Workshop/main/current/k8s-manifests/nothingallowedpod.yaml
+        dest: "{{ playbook_dir }}/k8s-manifests/nothingallowedpod.yaml"
+
+    - name: Download supply chain demo manifests
+      ansible.builtin.uri:
+        url: "https://raw.githubusercontent.com/lockfale/Malicious_Containers_Workshop/main/current/k8s-manifests/{{ item }}"
+        dest: "{{ playbook_dir }}/k8s-manifests/{{ item }}"
+      loop:
+        - supply-chain-demo.yaml
+        - imds-demo-pod.yaml
+        - network-policy-demo.yaml
+
+    - name: Create helm config directory
+      ansible.builtin.file:
+        path: "{{ playbook_dir }}/helm-config"
+        state: directory
+        mode: '0750'
+
+    - name: Download grafana helm config
+      ansible.builtin.uri:
+        url: https://raw.githubusercontent.com/lockfale/Malicious_Containers_Workshop/main/current/helm-config/grafana-config.yaml
+        dest: "{{ playbook_dir }}/helm-config/grafana-config.yaml"
+
+    - name: Download promtail helm config
+      ansible.builtin.uri:
+        url: https://raw.githubusercontent.com/lockfale/Malicious_Containers_Workshop/main/current/helm-config/promtail-config.yaml
+        dest: "{{ playbook_dir }}/helm-config/promtail-config.yaml"
+
+    - name: Create scripts directory
+      ansible.builtin.file:
+        path: "{{ playbook_dir }}/scripts"
+        state: directory
+        mode: '0750'
+
+    - name: Download reverse shell handler
+      ansible.builtin.uri:
+        url: https://raw.githubusercontent.com/lockfale/Malicious_Containers_Workshop/main/current/scripts/reverse_shell_handler.py
+        dest: "{{ playbook_dir }}/scripts/reverse_shell_handler.py"
+
+    - name: Download verification script
+      ansible.builtin.uri:
+        url: https://raw.githubusercontent.com/lockfale/Malicious_Containers_Workshop/main/current/scripts/verify-setup.sh
+        dest: "{{ playbook_dir }}/scripts/verify-setup.sh"
+        mode: '0755'
+
+    - name: Clean up
+      ansible.builtin.file:
+        path: "/tmp/lab-setup"
+        state: absent
+
+    - name: Tell user to exit terminal and start a new one
+      ansible.builtin.debug:
+        msg: "Step 3 of setup finished, close this terminal and open a new one."
