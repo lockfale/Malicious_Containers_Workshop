@@ -1,26 +1,40 @@
 # Malicious Containers Workshop
 
-This repository contains the slides and accompanying lab materials for the workshops delivered at DefCon and other conferences. The most recent being [CactusCon](CactusCon_24/README.md). Each conferences materials will be located in their respective sub-folders.
+A hands-on workshop covering Kubernetes and container security — from offensive techniques to detection and response. Learn to build, deploy, and detect malicious containers in a safe lab environment.
 
+## Repository Structure
 
-## Past Workshops
+- **`current/`** — The latest version of the workshop materials, labs, and infrastructure setup. Start here.
+- **`archived/`** — Previous conference-specific versions (DEF CON 30, DEF CON 31, BSides Charleston, CactusCon, ISSA Triad). Preserved for reference.
 
-The repository also contains past versions of the course, such as the original [Workshop delivered at DEFCON 30 - Creating and Uncovering Malicious Containers](https://forum.defcon.org/node/241774), [DEFCON 31 - Creating and uncovering malicious containers: Redux](https://forum.defcon.org/node/246020) and iterations delivered at [BSides Charleston 22](https://bsideschs.ticketbud.com/ws-creating), [BSides Charleston 23](https://bsideschs.ticketbud.com/ws-malkub), [CactusCon](https://www.cactuscon.com/cc12-schedule) and [ISSA Triad 2023 Security Summit](https://triadnc.issa.org/). As well as any versions to be delivered in the future as we continue to update and improve it or offer it at other events. 
+## Getting Started
 
+See [`current/README.md`](current/README.md) for an overview and [`current/lab-setup.md`](current/lab-setup.md) for environment setup instructions.
+
+## Workshop Modules
+
+1. **Docker Fundamentals** — Images, containers, layers, process hierarchy
+2. **Exploring Containers** — Image history, reverse engineering, extracting artifacts
+3. **Offensive Docker Techniques** — Data exfiltration, socket hijacking, privilege escalation
+4. **Container IR** — Image forensics CTF, cleanup
+5. **Kubernetes 101** — Architecture, components, networking
+6. **Kubernetes Security** — RBAC abuse, privilege escalation, golden ticket attacks, evil pods
+7. **Supply Chain Security** — Image signing (cosign/Sigstore), SBOMs (syft), vulnerability scanning (grype), provenance
+8. **Modern Runtime Security** — Tracee, Falco, Tetragon — eBPF-based detection and comparison
+9. **Cloud-Native Attacks** — IMDS exploitation, workload identity abuse, network policy bypass
 
 ## Presenters
 
 ### Instructor: David Mitchell
-![lego-profile](https://github.com/lockfale/Malicious_Containers_Workshop/assets/913856/f3e64df8-215f-466a-b9cb-a3933e807b60)
-> <a target="_blank" href="https://twitter.com/digish0"><img src="https://img.shields.io/twitter/follow/digish0"></a>\
-> https://github.com/digital-shokunin/digital-shokunin/README.md
+> [@digish0](https://twitter.com/digish0) | https://digital-shokunin.net
 
-### Instructor: Adrian Wood 
-![threlfall](https://github.com/lockfale/Malicious_Containers_Workshop/assets/913856/901c59ef-9e83-49d1-b0df-d89c6002338d)
-> <a target="_blank" href="https://twitter.com/WHITEHACKSEC"><img src="https://img.shields.io/twitter/follow/WhiteHackSec"></a>\
-> https://keybase.io/threlfall 
-
+### Instructor: Adrian Wood
+> [@whitehacksec](https://twitter.com/WHITEHACKSEC) | https://5stars217.github.io
 
 ## Our lockpick/hacker(space) group
 
-[![falelogo](https://github.com/lockfale/Malicious_Containers_Workshop/assets/913856/4a836cf4-cc97-49ec-a4c8-ed739c83820e)](https://github.com/lockFALE/)
+[![FALE logo](https://github.com/lockfale/Malicious_Containers_Workshop/assets/913856/4a836cf4-cc97-49ec-a4c8-ed739c83820e)](https://github.com/lockFALE/)
+
+## License
+
+See [LICENSE](LICENSE).

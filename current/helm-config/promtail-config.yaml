@@ -1,0 +1,5 @@
+config:
+  serverPort: 8080
+  clients:
+    # Loki monolithic mode endpoint (replaces loki-distributed gateway)
+    - url: http://loki.monitoring:3100/loki/api/v1/push

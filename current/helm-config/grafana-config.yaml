@@ -1,0 +1,15 @@
+prometheus:
+  prometheusSpec:
+    serviceMonitorSelectorNilUsesHelmValues: false
+    serviceMonitorSelector: {}
+    serviceMonitorNamespaceSelector: {}
+
+grafana:
+  sidecar:
+    datasources:
+      defaultDatasourceEnabled: true
+  additionalDataSources:
+    # Loki monolithic mode service name (replaces loki-distributed)
+    - name: Loki
+      type: loki
+      url: http://loki.monitoring:3100

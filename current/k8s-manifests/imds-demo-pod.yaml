@@ -1,0 +1,26 @@
+---
+# Pod for IMDS attack demonstration
+# When running on a cloud provider (AWS/GCP/Azure), this pod can query the
+# instance metadata service. In our kind lab, this demonstrates the concept
+# and the commands, even though the IMDS endpoint won't be available.
+apiVersion: v1
+kind: Pod
+metadata:
+  name: imds-attack-pod
+  namespace: pls-dont-hack-me
+  labels:
+    app: imds-attack
+    demo: cloud-native
+spec:
+  containers:
+  - name: imds-attacker
+    image: alpine/curl:8.11.1
+    command: ["/bin/sh", "-c", "--"]
+    args: ["while true; do sleep 30; done;"]
+    resources:
+      requests:
+        memory: "64Mi"
+        cpu: "250m"
+      limits:
+        memory: "128Mi"
+        cpu: "500m"
